@@ -1,2 +1,2 @@
-# API-leaning
+# API-learning
 My first API building. 
