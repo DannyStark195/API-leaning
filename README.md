@@ -1,2 +1,3 @@
-# API-learning
-My first API building. 
+# API-leaning
+Learning to build API's.
+With projects.

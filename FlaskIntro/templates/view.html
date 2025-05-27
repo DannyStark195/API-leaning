@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 class="title">Task Details</h1>
+
+    <div class="task-details">
+        <h2>{{ task.title }}</h2>
+        <p>{{ task.description }}</p>
+        <small>Created on: {{ task.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
+        <div>
+            <a class="" href="/update/{{ task.id }}"><button>Update</button></a>
+                <br><br><br>
+            <a class="" href="/delete/{{ task.id }}"><button>Delete</button></a>
+        </div>
+        <div class="checkbox-container">
+           <form action="/mark_completed/{{ task.id }}" method="POST">
+            <input type="hidden" name="completed" value="1">
+            <button type="submit" classs="btn mark-completed-btn">Complete</button>
+            </form>
+        </div>
+    </div>
+    
+
+    <div class="action-container">
+        <a class="btn back-btn" href="/">Back to Task List</a>
+    </div>
+</div>
+
+<style>
+    .task-details {
+        background: #1f202a;
+        color: aliceblue;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: left;
+        margin: 20px auto;
+        max-width: 600px;
+    }
+    .task-details h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .task-details p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+    .task-details small {
+        font-size: 12px;
+        color: #ccc;
+    }
+    .back-btn {
+        background: #1c7ecf;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
