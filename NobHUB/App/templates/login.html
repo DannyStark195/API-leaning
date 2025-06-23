@@ -1,0 +1,41 @@
+{% extends 'form.html' %}
+{% block title%}NobHUB Signup{% endblock %}
+{% block body %}
+
+<div class="content">
+    <div class="action-container">
+        <a href="/signup" class="btn back-btn">Back</a>
+    </div>
+    <h1 class="title">Login</h1>
+
+  
+    <div class="form-container">
+        <div class="form-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+        
+            <div class="form-container" style="color: rgb(89, 193, 201)">
+                {{messages[0] }}
+            
+            </div>
+            {% endif %}
+        {% endwith %}
+    
+        <form action="" method="POST" class="task-form">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" id="password" placeholder="Username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')">
+            
+            
+            <label for="password0" class="form-label">PassWord</label>
+            <input type="password" name="password0" id="password" placeholder="PassWord" class="task-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')">
+            
+            
+            <button type="submit" class="btn add-btn"> GO </button>
+        </form>
+        
+    </div>
+    
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container-fluid">
+  <div class="row vh-100">
+    
+    <!-- Left Panel: Still Contacts -->
+    <div class="col-md-4 bg-light border-end p-3">
+      <h4>{{ user.username }}</h4>
+      <h5>Contacts</h5>
+     
+      <ul class="list-group">
+         {% for contact in contacts %}
+        <a href="/chat/{{ contact.id }}"><li class="list-group-item active">{{ contact.contact_name }}</li></a>
+        {% endfor %}
+      </ul>
+      
+    </div>
+
+    <!-- Right Panel: Chat Area -->
+    <div class="col-md-8 d-flex flex-column">
+      
+      <!-- Chat Header -->
+      <div class="border-bottom p-3">
+        <h5>Chat with {{contact.contact_name}}</h5>
+      </div>
+
+      <!-- Chat Body -->
+       {% if messages %}
+       <div class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
+       {% for message in messages %}
+  <div>
+    <strong>
+      
+    {{ message.message }}
+    <small>{{ message.time.strftime('%Y-%m-%d %H:%M') }}</small>
+  </div>
+{% endfor %}
+         
+         
+        </div>
+ 
+        {% else %}
+        <div class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
+        
+        <p>No message</p>
+         
+         
+        </div>
+      
+             {% endif %}
+      <!-- Chat Input -->
+      <form action="/chat/{{ contact.id }}" method="POST" class="p-3 border-top d-flex">
+        <input type="text" name="user_message" class="form-control me-2" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')">
+        <button type="submit" class="btn btn-success">Send</button>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

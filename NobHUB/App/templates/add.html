@@ -1,0 +1,78 @@
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="content">
+    <div class="action-container">
+        <a href="/" class="btn back-btn">Back</a>
+    </div>
+    <h1 class="title">New contact</h1>
+
+  
+    <div class="form-container">
+        <form action="" method="POST" class="task-form">
+            <label for="title" class="form-label">Contact name</label>
+            <input type="text" name="contact_name" id="contact_name" placeholder="Contact name" class="task-input" required oninvalid="this.setCustomValidity('Task title is required')" oninput="this.setCustomValidity('')">
+            
+            <label for="description" class="form-label">Phone Number</label>
+            <input type="text" name="number" id="number" placeholder=" " class="task-input">
+            
+            <button type="submit" class="btn add-btn"> Save </button>
+        </form>
+        
+    </div>
+    
+
+</div>
+<style>
+    .form-container {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 20px auto;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .task-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background: #0056b3;
+    }
+
+    .back-btn {
+        margin-top: 20px;
+        display: inline-block;
+        text-align: center;
+    }
+</style>
+{% endblock %}

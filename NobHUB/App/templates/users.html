@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block body %}
+ <div class="col-md-4 bg-light border-end p-3">
+      <h5>Contacts</h5>
+       <div class="search-container">
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="search" id="search" placeholder="Search NobHUB" >
+            <button type="submit" class="btn btn-primary mb-3">🔎</button>
+        </form>
+        </div>
+        <div>
+      <ul class="list-group">
+        <!-- Example Contact List -->
+         {% if users %}
+          {% for user in users %}
+        <button class="btn btn-primary mb-3">{{user.username}} </button>
+           <a href="/add/{{user.id}}"><button class="btn btn-primary mb-3">➕ Add Contact</button></a>
+
+            <hr>     
+        {% endfor %}  
+        
+      </ul>
+      {%else%}
+        <p> '{{ users_to_find}}' not found</p>
+        {% endif %}
+    </div>
+  </div>
+       {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container-fluid">
+  <div class="row vh-100">
+    
+    <!-- Left Panel: Contacts & Buttons -->
+    <div class="col-md-4 bg-light border-end p-3">
+      <h4>{{ user.username }}</h4>
+      <h5>Contacts</h5>
+       <div class="search-container">
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="search" id="search" placeholder="Search NobHUB" >
+            <button type="submit" class="btn btn-primary mb-3">🔎</button>
+        </form>
+    </div>
+      <button class="btn btn-primary mb-3">➕ Add Contact</button>
+
+      <ul class="list-group">
+        <!-- Example Contact List -->
+         {% for contact in contacts%}
+        <a href="/chat/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
+        {% endfor %}
+        
+      </ul>
+    </div>
+
+    <!-- Right Panel: Empty Chat View -->
+    <div class="col-md-8 d-flex justify-content-center align-items-center">
+      <h4>Select a contact to start chatting 💬</h4>
+    </div>
+
+  </div>
+</div>
+ </div>
+</div>
+{% endblock %}

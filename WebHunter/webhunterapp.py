@@ -5,12 +5,10 @@ import os
 app = Flask(__name__)
 webpath = os.path.join(os.getcwd(),'webhuntedwebsite.html')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def home():
-    if request.method== 'POST':
-        pass
-    else:
-        return render_template('webhunter.html')
+    return render_template('webhunter.html')
+
 @app.route('/website', methods=['GET'])
 def website():
     website_url = request.args.get('search')
