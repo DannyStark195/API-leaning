@@ -11,24 +11,38 @@ routes = Blueprint('routes',__name__)
 @login_required
 def home():
     
-    contacts = Contacts.query.filter(((Contacts.user_id==current_user.id)&(Contacts.contact_name==current_user.username))| ((Contacts.user_id==current_user.id)&(Contacts.contact_name=='N.O.B'))|((Contacts.user_id==current_user.id)&(Contacts.contact_name=='Dennis'))).all()
+    contacts = Contacts.query.filter_by(user_id=current_user.id).all()
     print(contacts)
-    if not contacts:
-        contact_yourself = contact = Contacts(user_id=current_user.id, contact_id=current_user.id, contact_name=current_user.username+'(Yourself)', contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg')
+    contact_yourself_exists = Contacts.query.filter_by(user_id=current_user.id, contact_id=current_user.id).first()
+    
         #contact_nob = Contacts(user_id=current_user.id, contact_name='N.O.B', contact_number='0000001', contact_image_path='static/images/defaultimg.jpg')
         #contact_dennis = Contacts(user_id=current_user.id, contact_name='Dennis', contact_number='0000002', contact_image_path='static/images/defaultimg.jpg')
-        nob_ai = User.query.filter_by(username='N.O.B').first()
-        dennis_ai = User.query.filter_by(username='Dennis').first()
-        contact_nob = Contacts(user_id=current_user.id, contact_id=nob_ai.id,contact_name='N.O.B', contact_number='0000001',contact_image_path='static/images/defaultimg.jpg')
-        contact_dennis = Contacts(user_id=current_user.id,contact_id=dennis_ai.id, contact_name='Dennis', contact_number='0000002', contact_image_path='static/images/defaultimg.jpg')
-        
+    nob_ai = User.query.filter_by(username='N.O.B').first()
+    dennis_ai = User.query.filter_by(username='Dennis').first()
+    contact_nob_exists = None
+    if nob_ai:
+        contact_nob_exists = Contacts.query.filter_by(user_id=current_user.id, contact_id=nob_ai.id).first()
+    contact_dennis_exists = None
+    if dennis_ai:
+        contact_dennis_exists = Contacts.query.filter_by(user_id=current_user.id, contact_id=dennis_ai.id).first()
+    if not contact_yourself_exists or not contact_nob_exists or not contact_dennis_exists:
         try:
-            nob_db.session.add(contact_nob)
-            nob_db.session.add(contact_dennis)
-            nob_db.session.add(contact_yourself)
+            if not contact_yourself_exists:
+                contact_yourself= Contacts(user_id=current_user.id, contact_id=current_user.id, contact_name=current_user.username+'(Yourself)', contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg')
+                nob_db.session.add(contact_yourself)
+            if nob_ai and not contact_nob_exists:
+                contact_nob = Contacts(user_id=current_user.id, contact_id=nob_ai.id,contact_name='N.O.B', contact_number='0000001',contact_image_path='static/images/defaultimg.jpg')
+                nob_db.session.add(contact_nob)
+            if dennis_ai and not contact_dennis_exists:
+                contact_dennis = Contacts(user_id=current_user.id,contact_id=dennis_ai.id, contact_name='Dennis', contact_number='0000002', contact_image_path='static/images/defaultimg.jpg')
+                nob_db.session.add(contact_dennis)
+           
+            
+            
             nob_db.session.commit()
             return redirect('/home')
         except Exception as e:
+            nob_db.session.rollback()
             print(e)
             return "Error: 101"
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()  
@@ -42,38 +56,45 @@ def users():
 @login_required
 def chat(id):
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()
-    contact = Contacts.query.get_or_404(id)
-    messages = Messages.query.filter_by(user_id=current_user.id, contact_id=contact.id).order_by(Messages.time).all()
+    user_contacts_entry = Contacts.query.filter_by(id=id, user_id=current_user.id).first_or_404()
+    user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id)
+    #messages = Messages.query.filter_by(user_id=current_user.id, contact_id=contact.id).order_by(Messages.time).all()
     #reverse_messages = Messages.query.filter_by(user_id=contact.id, contact_id=current_user.id).order_by(Messages.time).all()
     #messages = Messages.query.filter(((Messages.user_id==current_user.id) & (Messages.contact_id==contact.id)) | ((Messages.user_id==contact.id) & (Messages.contact_id==current_user.id))).order_by(Messages.time).all()    
-    # messages = Messages.query.filter(
-    # or_(
-    #     and_(Messages.user_id == current_user.id, Messages.contact_id == contact.id),
-    #     and_(Messages.user_id == contact.id, Messages.contact_id == current_user.id)
-    # )).order_by(Messages.time).all()
+    messages = Messages.query.filter(
+     or_(
+         and_(Messages.user_id == current_user.id, Messages.contact_id == user_to_chatwith.id),
+         and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
+     )).order_by(Messages.time).all()
     print(messages)
     if request.method== 'POST':
         user_message=request.form.get('user_message')
         
-        chat_messages = Messages(user_id= current_user.id, contact_id=contact.id, message=user_message)
-        if contact.contact_name== 'N.O.B':
-            contact_nob_message = NOB(user_message)
-            chat_messages = Messages(user_id= current_user.id, contact_id=contact.id, message=contact_nob_message)
-        if contact.contact_name== 'Dennis':
-            contact_dennis_message = Dennis(user_message)
-            chat_messages = Messages(user_id= current_user.id, contact_id=contact.id, message=contact_dennis_message)
+        chat_messages = Messages(user_id= current_user.id, contact_id=user_to_chatwith.id, message=user_message)
+        if user_contacts_entry.contact_name== 'N.O.B':
+            try:
+                contact_nob_message = NOB(user_message)
+            except:
+                return redirect(url_for('routes.chat', id=id))
+            chat_messages = Messages(user_id= user_to_chatwith.id, contact_id=current_user.id, message=contact_nob_message)
+        if user_contacts_entry.contact_name== 'Dennis':
+            try:
+                contact_dennis_message = Dennis(user_message)
+            except:
+                return redirect(url_for('routes.chat', id=id))
+            chat_messages = Messages(user_id= user_to_chatwith.id, contact_id=current_user.id, message=contact_dennis_message)
 
         try:
             nob_db.session.add(chat_messages)
             nob_db.session.commit()
-            print("Saved message:", chat_messages)
-            
+            print("Saved message:", chat_messages.user_id)
+            print("Saved message:", current_user.id)
             #messages = Messages.query.filter((Messages.user_id==current_user.id and Messages.contact_id==contact.id) | (Messages.user_id==contact.id and Messages.contact_id==current_user.id)).all()
-            return redirect(url_for('routes.chat', id=contact.id))
+            return redirect(url_for('routes.chat', id=id))
         except Exception as e:
             print(e)
             return "Error 201: Failed to send message"
-    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=contact)
+    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
 
     # return render_template('chat.html', contacts=contacts, user=current_user, messages=messages, reverse_messages=reverse_messages, contact=contact)
 
@@ -92,7 +113,7 @@ def add_contact(id):
     reverse_contact = Contacts(user_id=contact_found.id, contact_id=current_user.id, contact_name=current_user.username, contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg')
     #reverse_contact = Contacts(user_id=contact_found.id,contact_name=current_user.username, contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg')
 
-    if contact_found.username == current_user.username or current_user.username==contact_found.username:
+    if contact_found.username == current_user.username:
         return redirect('/home')
     contact_exists = Contacts.query.filter_by(user_id=current_user.id, contact_name=contact_found.username).first()
     reverse_contact_exists = Contacts.query.filter_by(user_id=contact_found.id, contact_name=current_user.username).first()

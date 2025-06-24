@@ -7,6 +7,12 @@
     <!-- Left Panel: Still Contacts -->
     <div class="col-md-4 bg-light border-end p-3">
       <h4>{{ user.username }}</h4>
+      <div class="search-container">
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="search" id="search" placeholder="Search NobHUB" >
+            <button type="submit" class="btn btn-primary mb-3">🔎</button>
+        </form>
+        </div>
       <h5>Contacts</h5>
      
       <ul class="list-group">
@@ -22,7 +28,7 @@
       
       <!-- Chat Header -->
       <div class="border-bottom p-3">
-        <h5>Chat with {{contact.contact_name}}</h5>
+        <h5>Chat with {{user_to_chatwith.username}}</h5>
       </div>
 
       <!-- Chat Body -->
@@ -31,9 +37,15 @@
        {% for message in messages %}
   <div>
     <strong>
-      
-    {{ message.message }}
-    <small>{{ message.time.strftime('%Y-%m-%d %H:%M') }}</small>
+      {% if message.user_id== user.id%}
+        Me: 
+        {% endif %}
+      {%if message.user_id == user_to_chatwith.id %}
+       
+        {{ user_to_chatwith.username}}:
+        {% endif %}
+    </strong>
+      [ {{ message.message }} ]|<small>{{ message.time.strftime('%Y-%m-%d %H:%M') }}</small>
   </div>
 {% endfor %}
          
@@ -43,7 +55,7 @@
         {% else %}
         <div class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
         
-        <p>No message</p>
+        <p>No Messages yet. </p>
          
          
         </div>
