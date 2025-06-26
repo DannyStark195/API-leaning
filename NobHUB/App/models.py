@@ -24,7 +24,7 @@ class User(UserMixin, nob_db.Model):
 class Contacts(nob_db.Model):
     id = nob_db.Column(nob_db.Integer, primary_key=True)
     user_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)
-    contact_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)  # <-- Add this
+    contact_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)  
     contact_name = nob_db.Column(nob_db.String(20), nullable=False)
     contact_number = nob_db.Column(nob_db.String(200), nullable=False)
     contact_image_path =  nob_db.Column(nob_db.String(200), nullable=False)
