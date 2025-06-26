@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from .models import nob_db
 from .models import User, Contacts, Messages
 from .NOB_AI import NOB
+from sqlalchemy import or_, and_
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
 
@@ -37,10 +38,7 @@ def signup():
         user_password_hashed = generate_password_hash(user_password, method='pbkdf2:sha256')
         new_user = User(username=username, user_email=user_email, user_number=user_number,user_password_hash=user_password_hashed,user_image_path='static/images/defaultimg.jpg')
         nob_ai_exists = User.query.filter_by(username='N.O.B').first()
-        dennis_ai_exists = User.query.filter_by(username='dennis').first()
-        nob_ai = User(username='N.O.B', user_number='0000001', user_email='nob@ai.com', user_password_hash='-', user_image_path='static/images/defaultimg.jpg')
-        dennis_ai = User(username='Dennis', user_number='0000002', user_email='dennis@ai.com', user_password_hash='-', user_image_path='static/images/defaultimg.jpg')
-       
+        dennis_ai_exists = User.query.filter_by(username='dennis').first() 
         
         try:
             nob_db.session.add(new_user)
@@ -72,14 +70,15 @@ def login_post():
     username = request.form.get('username')
     user_password = request.form.get('password0')
 
-    user = User.query.filter_by(username=username).first()
-    if not user:
-        flash('Username is does not exist!')
+    user_or_email = User.query.filter(or_(User.username==username, User.user_email==username)).first()
+    
+    if not user_or_email:
+        flash('Username/Email does not exist!')
 
-    if not user or not check_password_hash(user.user_password_hash, user_password):
+    if not user_or_email or not check_password_hash(user_or_email.user_password_hash, user_password):
         flash('Password is incorrect!')
         return redirect(url_for('auth.login'))
-    login_user(user)
+    login_user(user_or_email)
     #return NOB(f"Hello I am {username}")
     return redirect('/home')
 @auth.route('/logout')
