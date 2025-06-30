@@ -1,5 +1,5 @@
 {% extends 'form.html' %}
-{% block title%}NobHUB Signup{% endblock %}
+{% block title%}NobHUB Login{% endblock %}
 {% block body %}
 
 <div class="content">
@@ -22,15 +22,31 @@
         {% endwith %}
     
         <form action="" method="POST" class="task-form">
-            <label for="username" class="form-label">Username</label>
+            <!-- <label for="username" class="form-label">Username</label>
             <input type="text" name="username" id="password" placeholder="Username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')">
-            
-            
-            <label for="password0" class="form-label">PassWord</label>
+             -->
+            {{ login_form.hidden_tag() }}
+                {{login_form.username.label(for="username", class="form-label")}} 
+                    {{ login_form.username(class="task-input")}}
+                {% for error in login_form.username.errors %}
+                <div class="form-container" style="color: rgb(89, 193, 201)">
+                    {{ error }}
+                </div>
+                {% endfor %}
+
+                {{login_form.user_password.label(for="password0", class="form-label")}} 
+                    {{ login_form.user_password(class="task-input")}}
+                    {% for error in login_form.user_password.errors %}
+                    <div class="form-container" style="color: rgb(89, 193, 201)">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            {{ login_form.submit(class="btn add-btn")}}
+            <!-- <label for="password0" class="form-label">PassWord</label>
             <input type="password" name="password0" id="password" placeholder="PassWord" class="task-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')">
+             -->
             
-            
-            <button type="submit" class="btn add-btn"> GO </button>
+            <!-- <button type="submit" class="btn add-btn"> GO </button> -->
         </form>
         
     </div>

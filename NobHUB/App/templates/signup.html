@@ -26,13 +26,24 @@
             <input type="email" name="user_email" id="user_email" placeholder="Email" class="task-input" required oninvalid="this.setCustomValidity('Email is required')" oninput="this.setCustomValidity('')">
             
             <label for="number" class="form-label">Phone Number</label>
-            <input type="text" name="number" id="number" placeholder=" " class="task-input">
-            <label for="password0" class="form-label">PassWord</label>
-            <input type="password" name="password0" id="password" placeholder="PassWord" class="task-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')">
-            <label for="password1" class="form-label">PassWord</label>
-            <input type="password" name="password1" id="password" placeholder="Confirm PassWord" class="task-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')">
+            <input type="text" name="number" id="number" placeholder="" class="task-input">
             
-            
+            <label for="password0" class="form-label">PassWord </label>
+                <div class="password">
+                    <input type="checkbox" id="togglePassword" class="password-toggle">
+            <label for="togglePassword" class="toggle-eye open">
+                <ion-icon name="eye-outline"></ion-icon>
+            </label>
+            <label for="togglePassword" class="toggle-eye close">
+                <ion-icon name="eye-off-outline"></ion-icon>
+            </label>
+                <input type="password" name="password0" id="password0" placeholder="Password" class="password-input" required >
+                </div>
+
+            <label for="password1" class="form-label">PassWord </label>
+               
+            <input type="password" name="password1" id="password1" placeholder="Confirm PassWord" class="password-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')">
+        </div>
             <button type="submit" class="btn add-btn"> Save </button>
         </form>
         
@@ -40,5 +51,45 @@
     
 
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('togglePassword');
+    const password = document.getElementById('password0');
+    const password1 = document.getElementById('password1');
+    const eyeOpen = document.querySelector('.toggle-eye.open');
+    const eyeClose = document.querySelector('.toggle-eye.close');
+
+    function updateEye() {
+        if (password.type === 'password') {
+            eyeOpen.style.display = 'block';
+            eyeClose.style.display = 'none';
+        } else {
+            eyeOpen.style.display = 'none';
+            eyeClose.style.display = 'block';
+        }
+        if (password1.type === 'password') {
+            eyeOpen.style.display = 'block';
+            eyeClose.style.display = 'none';
+        } else {
+            eyeOpen.style.display = 'none';
+            eyeClose.style.display = 'block';
+        }
+    }
+
+    toggle.addEventListener('change', function() {
+        if (toggle.checked) {
+            password.type = 'password';
+            password1.type = 'password';
+        } else {
+            password.type = 'text';
+            password1.type = 'text';
+        }
+        updateEye();
+    });
+
+    // Initialize eye icons
+    updateEye();
+});
+</script>
 
 {% endblock %}
