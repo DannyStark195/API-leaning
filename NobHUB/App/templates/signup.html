@@ -23,11 +23,18 @@
             <label for="username" class="form-label">Username</label>
             <!-- <input type="text" name="username" id="username" placeholder="username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')"> -->
             {{signup_form.hidden_tag()}}
-            {{ signup_form.username(id="username", class="task-input", placeholder="Username")}}
+            {{ signup_form.username(id="username", class="task-input", placeholder="Username", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
             <label for="user_email" class="form-label">Email</label>
             <!-- <input type="email" name="user_email" id="user_email" placeholder="Email" class="task-input" required oninvalid="this.setCustomValidity('Email is required')" oninput="this.setCustomValidity('')"> -->
             {{ signup_form.email(id="user_email", class="task-input", placeholder="Email", oninvalid="this.setCustomValidity('Email is required')", oninput="this.setCustomValidity('')")}}
 
+                        {% for error in signup_form.email.errors %}
+                    <p>
+                            {{ error }}
+                            <br>
+                    </p>
+                            {% endfor%}
+    
             <label for="number" class="form-label">Phone Number</label>
             <!-- <input type="text" name="number" id="number" placeholder="" class="task-input"> -->
             {{ signup_form.phoneNumber(id="number", class="task-input", placeholder="Phone Number", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
@@ -44,13 +51,30 @@
                 <!-- <input type="password" name="password0" id="password0" placeholder="Password" class="password-input" required > -->
                     {{ signup_form.password0(id="password0", class="password-input", placeholder="Password", oninvalid="this.setCustomValidity('PassWord is required')", oninput="this.setCustomValidity('')")}}
                 </div>
-
+                 
+                        {% for error in signup_form.password0.errors %}
+                    <p>
+                            {{ error }}
+                            <br>
+                    </p>
+                            {% endfor%}
+    
+            
+                    
+                        {% for error in signup_form.password1.errors %}
+                    <p>
+                            {{ error }}
+                            <br>
+                    </p>
+                            {% endfor%}
             <label for="password1" class="form-label">PassWord </label>
             <div class="password">
                 <!-- <input type="password" name="password1" id="password1" placeholder="Confirm PassWord" class="password-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')"> -->
                 {{ signup_form.password1(id="password1", class="password-input", placeholder="Confirm Password", oninvalid="this.setCustomValidity('PassWord is required)", oninput="this.setCustomValidity('')")}}
             </div>
-            <button type="submit" class="btn add-btn"> Save </button>
+          
+            <!-- <button type="submit" class="btn add-btn"> Save </button> -->
+             {{ signup_form.submit(class="btn add-btn")}}
         </form>
         
     </div>
