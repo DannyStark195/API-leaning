@@ -27,7 +27,7 @@
              -->
             {{ login_form.hidden_tag() }}
                 {{login_form.username.label(for="username", class="form-label")}} 
-                    {{ login_form.username(class="task-input")}}
+                    {{ login_form.username(class="task-input", )}}
                 {% for error in login_form.username.errors %}
                 <div class="form-container" style="color: rgb(89, 193, 201)">
                     {{ error }}
