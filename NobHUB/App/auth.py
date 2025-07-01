@@ -14,7 +14,7 @@ auth = Blueprint('auth', __name__)
 #Flask WTF
 class SignupForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired("Username is required")])
-    email = StringField("Email"), validators=[DataRequired("Email is required"),Email()]
+    email = StringField("Email", validators=[DataRequired("Email is required"),Email()])
     phoneNumber = StringField("Phone Number", validators=[DataRequired("Phone Number is required")])
     password0 = PasswordField("Password", validators=[DataRequired("Password is required")])
     password1 = PasswordField("Password", validators=[DataRequired("Password is required")])
@@ -76,7 +76,7 @@ def signup():
                 print(e)
                 return "Error 101: Failed to add user. Please try again!"    
     else:
-        return render_template('signup.html')
+        return render_template('signup.html', signup_form=signup_form)
 
 @auth.route('/login')
 def login():
