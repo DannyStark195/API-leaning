@@ -27,7 +27,7 @@
              -->
             {{ login_form.hidden_tag() }}
                 {{login_form.username.label(for="username", class="form-label")}} 
-                    {{ login_form.username(class="task-input", )}}
+                    {{ login_form.username(class="task-input", id="password", placeholder="Username", class="task-input", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
                 {% for error in login_form.username.errors %}
                 <div class="form-container" style="color: rgb(89, 193, 201)">
                     {{ error }}
@@ -35,7 +35,7 @@
                 {% endfor %}
 
                 {{login_form.user_password.label(for="password0", class="form-label")}} 
-                    {{ login_form.user_password(class="task-input")}}
+                    {{ login_form.user_password(class="task-input", id="password", placeholder="PassWord", class="task-input", oninvalid="this.setCustomValidity('PassWord is required')", oninput="this.setCustomValidity('')")}}
                     {% for error in login_form.user_password.errors %}
                     <div class="form-container" style="color: rgb(89, 193, 201)">
                     {{ error }}
