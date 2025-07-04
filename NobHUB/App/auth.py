@@ -54,7 +54,7 @@ def signup():
             if user_profile_pic:
                 imagename= secure_filename(user_profile_pic.filename)
                 user_image_path = os.path.join(current_app.config['PROFILE_IMAGE_PATH'], imagename)
-                user_profile_pic.save(user_image_path)
+                user_profile_pic.save(os.path.join('App/static',user_image_path))
             else:
                 user_image_path= os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg')
             user = User.query.filter_by(username=username).first()
@@ -76,10 +76,10 @@ def signup():
                 nob_ai_exists = User.query.filter_by(username='N.O.B').first()
                 dennis_ai_exists = User.query.filter_by(username='Dennis').first()
                 if not nob_ai_exists:
-                    nob_ai = User(username='N.O.B', user_number='0000001', user_email='nob@ai.com', user_password_hash='-', user_image_path='static/images/defaultimg.jpg')
+                    nob_ai = User(username='N.O.B', user_number='0000001', user_email='nob@ai.com', user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))
                     nob_db.session.add(nob_ai)
                 if not dennis_ai_exists:
-                    dennis_ai = User(username='Dennis', user_number='0000002', user_email='dennis@ai.com', user_password_hash='-', user_image_path='static/images/defaultimg.jpg')
+                    dennis_ai = User(username='Dennis', user_number='0000002', user_email='dennis@ai.com', user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))
                     nob_db.session.add(dennis_ai)
                 
             
@@ -115,6 +115,7 @@ def login():
             return redirect(url_for('auth.login'))
         login_user(user_or_email)
         #return NOB(f"Hello I am {username}")
+        
         return redirect('/home')
     return render_template('login.html',login_form=login_form)
 @auth.route('/logout')

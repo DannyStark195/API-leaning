@@ -10,7 +10,7 @@ routes = Blueprint('routes',__name__)
 @routes.route('/home', methods=["GET", "POST"])
 @login_required
 def home():
-    
+    print(current_user.user_image_path)
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()
     print(contacts)
     contact_yourself_exists = Contacts.query.filter_by(user_id=current_user.id, contact_id=current_user.id).first()  #check if user's self exists as a contacts
@@ -26,13 +26,13 @@ def home():
     if not contact_yourself_exists or not contact_nob_exists or not contact_dennis_exists:
         try:
             if not contact_yourself_exists:
-                contact_yourself= Contacts(user_id=current_user.id, contact_id=current_user.id, contact_name=current_user.username+'(Yourself)', contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg') #add user's self as a contact
+                contact_yourself= Contacts(user_id=current_user.id, contact_id=current_user.id, contact_name=current_user.username+'(Yourself)', contact_number=current_user.user_number, contact_image_path=current_user.user_image_path) #add user's self as a contact
                 nob_db.session.add(contact_yourself)
             if nob_ai and not contact_nob_exists:
-                contact_nob = Contacts(user_id=current_user.id, contact_id=nob_ai.id,contact_name='N.O.B', contact_number='0000001',contact_image_path='static/images/defaultimg.jpg')#add N.O.B as a contact
+                contact_nob = Contacts(user_id=current_user.id, contact_id=nob_ai.id,contact_name=nob_ai.username, contact_number=nob_ai.user_number,contact_image_path=nob_ai.user_image_path)#add N.O.B as a contact
                 nob_db.session.add(contact_nob)
             if dennis_ai and not contact_dennis_exists:
-                contact_dennis = Contacts(user_id=current_user.id,contact_id=dennis_ai.id, contact_name='Dennis', contact_number='0000002', contact_image_path='static/images/defaultimg.jpg') #add Dennis as a contact
+                contact_dennis = Contacts(user_id=current_user.id,contact_id=dennis_ai.id, contact_name=dennis_ai.username, contact_number=dennis_ai.user_number, contact_image_path=dennis_ai.user_image_path) #add Dennis as a contact
                 nob_db.session.add(contact_dennis)
            
             
@@ -108,9 +108,9 @@ def search():
 @login_required
 def add_contact(id):
     contact_found = User.query.get_or_404(id) # get a user if they exist
-    contact = Contacts(user_id=current_user.id,contact_id=contact_found.id, contact_name=contact_found.username, contact_number=contact_found.user_number, contact_image_path='static/images/defaultimg.jpg')
+    contact = Contacts(user_id=current_user.id,contact_id=contact_found.id, contact_name=contact_found.username, contact_number=contact_found.user_number, contact_image_path=contact_found.user_image_path)
     # contact = Contacts(user_id=current_user.id,contact_name=contact_found.username, contact_number=contact_found.user_number, contact_image_path='static/images/defaultimg.jpg')
-    reverse_contact = Contacts(user_id=contact_found.id, contact_id=current_user.id, contact_name=current_user.username, contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg')
+    reverse_contact = Contacts(user_id=contact_found.id, contact_id=current_user.id, contact_name=current_user.username, contact_number=current_user.user_number, contact_image_path=current_user.user_image_path)
     #reverse_contact = Contacts(user_id=contact_found.id,contact_name=current_user.username, contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg')
 
     if contact_found.username == current_user.username:

@@ -23,7 +23,7 @@ def create_app():
     
     app.config['MAX_CONTENT_LENGTH'] = 10*1024*1024 #Sets the limit to how large a file can be to be uploaded(10MB)
     app.config['ALLOWED_IMAGE_EXTENSIONS'] = ['.jpg', '.jpeg', '.png','.gif']
-    app.config['PROFILE_IMAGE_PATH'] = 'App/static/User_profile_pics'
+    app.config['PROFILE_IMAGE_PATH'] = 'User_profile_pics'
     app.register_blueprint(routes) #registers the routes from the route.py and the auth.py
     app.register_blueprint(auth)
     app.register_blueprint(admin, url_prefix='/admin')
