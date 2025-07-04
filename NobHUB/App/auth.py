@@ -1,13 +1,17 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, send_from_directory
 from .models import nob_db
 from .models import User, Contacts, Messages
 from .NOB_AI import NOB
 from sqlalchemy import or_, and_
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from werkzeug.exceptions import RequestEntityTooLarge
 from flask_login import login_user, logout_user, login_required
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
+from flask_wtf.file import FileField, FileAllowed
+import os
 
 #The auth.py defines the routes and logic for registration and authentication of users
 auth = Blueprint('auth', __name__)
@@ -18,11 +22,15 @@ class SignupForm(FlaskForm):
     phoneNumber = StringField("Phone Number", validators=[DataRequired(message="Phone Number is required")])
     password0 = PasswordField("Password", validators=[DataRequired(message="Password is required"),  Length(min=8, message="Passwords must be greater than 8 digits")])
     password1 = PasswordField("Password", validators=[DataRequired(message="Password is required"),EqualTo('password0', message="Passwords must be same")])
+    profile_pic = FileField("image",validators=[FileAllowed( ['jpg', 'jpeg', 'png','gif'], message='Please Upload an image!')])
     submit = SubmitField("Save")
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(message="Username is required")])
     user_password = PasswordField("Password", validators=[DataRequired(message="Password is required")])
     submit = SubmitField("GO")
+
+
 @auth.route('/signup', methods=['POST', 'GET'])
 def signup():
     signup_form = SignupForm()
@@ -37,10 +45,18 @@ def signup():
             #     flash("Passwords must be greater than 5 digits")
             #     return redirect(url_for('auth.signup'))
             
+            #Added and used lask wtf for form validation
             username= signup_form.username.data
             user_email= signup_form.email.data
             user_number= signup_form.phoneNumber.data
-
+            
+            user_profile_pic = signup_form.profile_pic.data
+            if user_profile_pic:
+                imagename= secure_filename(user_profile_pic.filename)
+                user_image_path = os.path.join(current_app.config['PROFILE_IMAGE_PATH'], imagename)
+                user_profile_pic.save(user_image_path)
+            else:
+                user_image_path= os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg')
             user = User.query.filter_by(username=username).first()
             email = User.query.filter_by(user_email=user_email).first()
 
@@ -52,7 +68,7 @@ def signup():
                 return redirect(url_for('auth.signup'))
 
             user_password_hashed = generate_password_hash(user_password, method='pbkdf2:sha256')
-            new_user = User(username=username, user_email=user_email, user_number=user_number,user_password_hash=user_password_hashed,user_image_path='static/images/defaultimg.jpg')
+            new_user = User(username=username, user_email=user_email, user_number=user_number,user_password_hash=user_password_hashed,user_image_path=user_image_path)
             
             
             try:
@@ -106,3 +122,31 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+@auth.route('/profile_pic', methods=['GET'])
+def profile_pic():
+    return render_template('profile_pic.html')
+
+@auth.route('/upload_profile_pic', methods=['POST'])
+def upload_profile_pic():
+    try:
+        file = request.files['profilePic']
+    except RequestEntityTooLarge:
+        flash("File is larger than 10MB limt")
+        return redirect(url_for('auth.profile_pic'))
+    extension = os.path.splitext(file.filename)[1]
+    if file:
+        if extension not in current_app.config['ALLOWED_IMAGE_EXTENSIONS']:
+            flash('File is not an image')
+            return redirect(url_for('auth.profile_pic'))
+        image_name = secure_filename(file.filename)
+        imgpath = os.path.join(current_app.config['PROFILE_IMAGE_PATH'], image_name)
+        file.save(imgpath)
+        
+        return render_template('profile_pic.html', image_name=image_name)
+
+    return redirect('/profile_pic')
+
+@auth.route('/serve-images/<filename>', methods=['GET'])
+def serve_image(filename):
+   
+    return send_from_directory(current_app.config['PROFILE_IMAGE_PATH'], filename)

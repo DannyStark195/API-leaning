@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}NobHUB-profile-pic{% endblock %}
+{%block head %} 
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+            background-image: url('');
+        }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+        }
+        .search-bar input[type="text"] {
+            padding: 0.5rem;
+            font-size: 1.1rem;
+            width: 300px;
+            border-radius: 4px 0 0 4px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+        .search-bar button {
+            padding: 0.5rem 1rem;
+            font-size: 1.1rem;
+            border-radius: 0 4px 4px 0;
+            border: 1px solid #ccc;
+            border-left: none;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .search-bar button:hover {
+            background: #388e3c;
+        }
+        img {
+            width: 250px;
+            height: 250px;
+            border-radius: 45%;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        border: 2px solid #ccc;
+         object-fit: cover;
+        
+    }
+        
+        h4 p{
+            font-size: 15px;
+            background: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        color: #333;
+
+        }
+        p{
+            font-size: 13px;
+            margin-left: 10px;
+            left: 20px;
+            margin: 1px 0;
+        padding: 10px 18px;
+        
+        border-radius: 8px;
+        
+        max-width: 400px;
+        text-align: center;
+        }
+        h1{
+            color: #333;
+        }
+    </style>
+{% endblock %}
+{%block body %} 
+    <div class="center-content">
+        <div><h1>NobHUB</h1>
+        </div>
+        <img src="{{url_for('auth.serve_image', filename=image_name)}}" alt="Logo">
+        <form class="search-bar" action="/upload_profile_pic" method="post" enctype="multipart/form-data">
+            <input type="file" name="profilePic" placeholder="upload file">
+            <button type="submit">Upload</button>
+            {% with messages = get_flashed_messages()%}
+            {%if messages%}
+            <div>
+                {{messages[0]}}
+            </div>
+            {%endif%}
+            {%endwith%}
+        
+        </form>
+    
+    </div>
+{% endblock %} 
