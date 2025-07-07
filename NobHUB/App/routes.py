@@ -1,16 +1,18 @@
-from flask import Blueprint, render_template, redirect, request, url_for
+from flask import Blueprint, render_template, redirect, request, url_for, current_app
 from flask_login import login_required, current_user
 from .models import nob_db
 from .models import User, Contacts, Messages
 from .NOB_AI import NOB, Dennis
 from sqlalchemy import or_, and_
+from .myWTF_Forms import SignupForm, LoginForm, EditForm
+from werkzeug.utils import secure_filename
+import os
 # The routes.py define the routes for the different pages 
 routes = Blueprint('routes',__name__)
 
 @routes.route('/home', methods=["GET", "POST"])
 @login_required
 def home():
-    print(current_user.user_image_path)
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()
     print(contacts)
     contact_yourself_exists = Contacts.query.filter_by(user_id=current_user.id, contact_id=current_user.id).first()  #check if user's self exists as a contacts
@@ -132,3 +134,39 @@ def add_contact(id):
         return "Error 311: Failed to add contact"
     return redirect('/home')
 
+@routes.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)
+
+@routes.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    edit_form = EditForm()
+    if edit_form.validate_on_submit():
+       
+        edited_username = edit_form.username.data
+        edited_user_email = edit_form.email.data
+        edited_user_number = edit_form.phoneNumber.data
+
+        edited_profile_pic = edit_form.profile_pic.data
+        if edited_profile_pic:
+            imagename = secure_filename(edited_profile_pic.filename)
+            image_path = os.path.join(current_app.config['PROFILE_IMAGE_PATH'], imagename)
+            edited_profile_pic.save(os.path.join('App/static', image_path))
+            current_user.user_image_path = image_path
+        if edited_username:
+            current_user.username = edited_username
+        elif edited_user_email:
+            current_user.user_email = edited_user_email
+        elif edited_user_number:
+            current_user.user_number = edited_user_number
+        try:
+            nob_db.session.commit()
+            return redirect('/profile')
+        except:
+            nob_db.session.rollback()
+            return redirect(url_for('routes.edit_profile'))
+
+    
+    return render_template('edit_profile.html', user=current_user, edit_form=edit_form)

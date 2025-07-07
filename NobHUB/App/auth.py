@@ -7,28 +7,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 from flask_login import login_user, logout_user, login_required
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
-from flask_wtf.file import FileField, FileAllowed
+from .myWTF_Forms import SignupForm, LoginForm
 import os
 
 #The auth.py defines the routes and logic for registration and authentication of users
 auth = Blueprint('auth', __name__)
 #Flask WTF
-class SignupForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired(message="Username is required")])
-    email = StringField("Email", validators=[DataRequired(message="Email is required"),Email(message="Enter a valid email address")])
-    phoneNumber = StringField("Phone Number", validators=[DataRequired(message="Phone Number is required")])
-    password0 = PasswordField("Password", validators=[DataRequired(message="Password is required"),  Length(min=8, message="Passwords must be greater than 8 digits")])
-    password1 = PasswordField("Password", validators=[DataRequired(message="Password is required"),EqualTo('password0', message="Passwords must be same")])
-    profile_pic = FileField("image",validators=[FileAllowed( ['jpg', 'jpeg', 'png','gif'], message='Please Upload an image!')])
-    submit = SubmitField("Save")
 
-class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired(message="Username is required")])
-    user_password = PasswordField("Password", validators=[DataRequired(message="Password is required")])
-    submit = SubmitField("GO")
 
 
 @auth.route('/signup', methods=['POST', 'GET'])
@@ -151,3 +136,4 @@ def upload_profile_pic():
 def serve_image(filename):
    
     return send_from_directory(current_app.config['PROFILE_IMAGE_PATH'], filename)
+
