@@ -15,29 +15,33 @@
             {% if messages %}
         
             <div class="form-container" style="color: rgb(89, 193, 201)">
-                {{messages[0] }} Go to <a href="/login"><button>Login Page</button></a>
+                {{messages[0] }} Go to  <a href="/login"><button class="btn btn-primary mb-3">Login</button></a>
             
             </div>
             {% endif %}
         {% endwith %}
+        
     <form action="" method="POST" class="task-form" enctype="multipart/form-data">
         {{signup_form.hidden_tag()}}
             <label class="form-label">Profile Pic</label>
                 {{ signup_form.profile_pic() }}
+                {% for error in signup_form.profile_pic.errors %}
+            <div class="form-container" style="color: rgb(89, 193, 201)">
+                {{ error }}            
+            </div>
+                            {% endfor%}
             <label for="username" class="form-label">Username</label>
             <!-- <input type="text" name="username" id="username" placeholder="username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')"> -->
             {{ signup_form.username(id="username", class="task-input", placeholder="Username", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
             <label for="user_email" class="form-label">Email</label>
             <!-- <input type="email" name="user_email" id="user_email" placeholder="Email" class="task-input" required oninvalid="this.setCustomValidity('Email is required')" oninput="this.setCustomValidity('')"> -->
             {{ signup_form.email(id="user_email", class="task-input", placeholder="Email", oninvalid="this.setCustomValidity('Email is required')", oninput="this.setCustomValidity('')")}}
-
-                        {% for error in signup_form.email.errors %}
-                    <p>
-                            {{ error }}
-                            <br>
-                    </p>
+                {% for error in signup_form.email.errors %}
+            <div class="form-container" style="color: rgb(89, 193, 201)">
+                {{ error }}            
+            </div>
                             {% endfor%}
-    
+                        
             <label for="number" class="form-label">Phone Number</label>
             <!-- <input type="text" name="number" id="number" placeholder="" class="task-input"> -->
             {{ signup_form.phoneNumber(id="number", class="task-input", placeholder="Phone Number", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
@@ -55,20 +59,16 @@
                     {{ signup_form.password0(id="password0", class="password-input", placeholder="Password", oninvalid="this.setCustomValidity('PassWord is required')", oninput="this.setCustomValidity('')")}}
                 </div>
                  
-                        {% for error in signup_form.password0.errors %}
-                    <p>
-                            {{ error }}
-                            <br>
-                    </p>
+                    {% for error in signup_form.password0.errors %}
+                            <div class="form-container" style="color: rgb(89, 193, 201)">
+                                {{ error }}
+                            </div>
                             {% endfor%}
     
-            
-                    
-                        {% for error in signup_form.password1.errors %}
-                    <p>
-                            {{ error }}
-                            <br>
-                    </p>
+                    {% for error in signup_form.password1.errors %}
+                        <div class="form-container" style="color: rgb(89, 193, 201)">
+                            {{ error }} 
+                        </div>
                             {% endfor%}
             <label for="password1" class="form-label">PassWord </label>
             <div class="password">
@@ -84,45 +84,5 @@
     
 
 </div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggle = document.getElementById('togglePassword');
-    const password = document.getElementById('password0');
-    const password1 = document.getElementById('password1');
-    const eyeOpen = document.querySelector('.toggle-eye.open');
-    const eyeClose = document.querySelector('.toggle-eye.close');
-
-    function updateEye() {
-        if (password.type === 'password') {
-            eyeOpen.style.display = 'block';
-            eyeClose.style.display = 'none';
-        } else {
-            eyeOpen.style.display = 'none';
-            eyeClose.style.display = 'block';
-        }
-        if (password1.type === 'password') {
-            eyeOpen.style.display = 'block';
-            eyeClose.style.display = 'none';
-        } else {
-            eyeOpen.style.display = 'none';
-            eyeClose.style.display = 'block';
-        }
-    }
-
-    toggle.addEventListener('change', function() {
-        if (toggle.checked) {
-            password.type = 'password';
-            password1.type = 'password';
-        } else {
-            password.type = 'text';
-            password1.type = 'text';
-        }
-        updateEye();
-    });
-
-    // Initialize eye icons
-    updateEye();
-});
-</script>
 
 {% endblock %}

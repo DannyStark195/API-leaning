@@ -141,5 +141,48 @@
 
 {% endblock %}
 </body>
+{% block script %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('togglePassword');
+    const password = document.getElementById('password0');
+    const password1 = document.getElementById('password1');
+    const eyeOpen = document.querySelector('.toggle-eye.open');
+    const eyeClose = document.querySelector('.toggle-eye.close');
+
+    function updateEye() {
+        if (password.type === 'password') {
+            eyeOpen.style.display = 'block';
+            eyeClose.style.display = 'none';
+        } else {
+            eyeOpen.style.display = 'none';
+            eyeClose.style.display = 'block';
+        }
+        if (password1.type === 'password') {
+            eyeOpen.style.display = 'block';
+            eyeClose.style.display = 'none';
+        } else {
+            eyeOpen.style.display = 'none';
+            eyeClose.style.display = 'block';
+        }
+    }
+
+    toggle.addEventListener('change', function() {
+        if (toggle.checked) {
+            password.type = 'password';
+            password1.type = 'password';
+        } else {
+            password.type = 'text';
+            password1.type = 'text';
+        }
+        updateEye();
+    });
+
+    // Initialize eye icons
+    updateEye();
+});
+</script>
+{% endblock %}
+
 </html>
 
