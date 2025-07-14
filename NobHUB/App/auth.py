@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from .models import nob_db
 from .models import User, Contacts, Messages
 from .NOB_AI import NOB
+from .events import socketio
 from sqlalchemy import or_, and_
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -99,9 +100,10 @@ def login():
             flash('Password is incorrect!')
             return redirect(url_for('auth.login'))
         login_user(user_or_email)
-        #return NOB(f"Hello I am {username}")
+        # socket.emit('join_global_chat', {'user':user_or_emial'})
+        # #return NOB(f"Hello I am {username}")
         
-        return redirect('/home')
+        return redirect(url_for('routes.home'))
     return render_template('login.html',login_form=login_form)
 @auth.route('/logout')
 @login_required

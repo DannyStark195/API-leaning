@@ -3,13 +3,16 @@ from flask_login import login_required, current_user
 from .models import nob_db
 from .models import User, Contacts, Messages
 from .NOB_AI import NOB, Dennis
+from .events import socketio
 from sqlalchemy import or_, and_
 from .myWTF_Forms import SignupForm, LoginForm, EditForm
 from werkzeug.utils import secure_filename
 import os
 # The routes.py define the routes for the different pages 
 routes = Blueprint('routes',__name__)
-
+@routes.route('/')
+def index():
+    return render_template('base.html')
 @routes.route('/home', methods=["GET", "POST"])
 @login_required
 def home():

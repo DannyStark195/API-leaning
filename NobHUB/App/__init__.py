@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
+from .events import socketio
 from .models import nob_db, User
 from .routes import routes
 from .auth import auth
@@ -10,11 +11,13 @@ import os
 
 #The __init.py is like the settings and configuration of the flask app
 #create a Flask instance in a function and call it in run.py to run the app
+
 def create_app():
     load_dotenv()
     secret_key0 = secrets.token_hex(16)
     secret_key1 = secrets.token_hex(16)
     app = Flask(__name__) #initialize the flask app instance
+    app.config['DEBUG'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nobdb.db' #configure database
     app.config['API_KEY'] = os.environ.get('API_KEY')  #configure gemini api-key
     app.config['SECRET_KEY'] = secret_key0+secret_key1 #defines a secret key
@@ -29,13 +32,15 @@ def create_app():
     app.register_blueprint(admin, url_prefix='/admin')
     nob_db.init_app(app) #initializes the database
     # Reference site for authentication: https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
+    
+    socketio.init_app(app)
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-
+    
     with app.app_context():
         nob_db.create_all()
     
