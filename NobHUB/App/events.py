@@ -11,8 +11,6 @@ def handle_connect():
     if current_user.is_authenticated():
         user_id = current_user.id
         username = current_user.username
-        active_users[request.sid] ={'user_id': user_id, 'username': username}
-        chats.setdefault('global_chat', []).append(request.sid)
         join_room('global_chat')
     print("User connected")
 @socketio.on('disconnect')
@@ -34,15 +32,17 @@ def handle_send_message(data):
     try:
         nob_db.session.add(chat_messages)
         nob_db.commit()
+        user_message= Messages.filter_by(user_id=current_user, contact_id=contact_id, message=user_message)
         message_data={
             'user_id': current_user.id,
             'username': current_user.username,
             'contact_id': contact_id,
             'message': user_message,
+            'time': user_message.time,
 
         }
 
-        emit('new-message', username=current_user.username, contact_id=contact_id, message=chat_messages)
+        #emit('new-message', message_data, chats=)
     except:
         nob_db.session.rollback
     

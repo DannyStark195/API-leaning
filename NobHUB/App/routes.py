@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, current_app
+from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash
 from flask_login import login_required, current_user
 from .models import nob_db
 from .models import User, Contacts, Messages
@@ -39,9 +39,7 @@ def home():
             if dennis_ai and not contact_dennis_exists:
                 contact_dennis = Contacts(user_id=current_user.id,contact_id=dennis_ai.id, contact_name=dennis_ai.username, contact_number=dennis_ai.user_number, contact_image_path=dennis_ai.user_image_path) #add Dennis as a contact
                 nob_db.session.add(contact_dennis)
-           
-            
-            
+                     
             nob_db.session.commit()
             return redirect('/home')
         except Exception as e:
@@ -55,6 +53,7 @@ def home():
 def users():
     users = User.query.all()
     return render_template('users.html', users=users)
+
 @routes.route('/chat/<int:id>', methods=['GET', 'POST'])
 @login_required
 def chat(id):
@@ -67,15 +66,40 @@ def chat(id):
          and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
      )).order_by(Messages.time).all()                                                                       #Get user and contacts messages
     print(messages)
+    # if user_to_chatwith.username== 'N.O.B' or user_to_chatwith.username=='Dennis':
+    #     return redirect(url_for('routes.chat_AI', id=id))
+   
+        # chat_messages = Messages(user_id= current_user.id, contact_id=user_to_chatwith.id, message=user_message)
+            #messages = Messages.query.filter((Messages.user_id==current_user.id and Messages.contact_id==contact.id) | (Messages.user_id==contact.id and Messages.contact_id==current_user.id)).all()
+        #     return redirect(url_for('routes.chat', id=id))
+        # except Exception as e:
+        #     print(e)
+        #     return "Error 201: Failed to send message"
+    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
+
+@routes.route('/chat/AI/<int:id>', methods=['GET', 'POST'])
+@login_required
+def chat_AI(id):
+    contacts = Contacts.query.filter_by(user_id=current_user.id).all()
+    user_contacts_entry = Contacts.query.filter_by(id=id, user_id=current_user.id).first_or_404()  # get a table consisting of the contacts associated with a user from the Contacts table
+    user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id)                     #  get the contact/user to chat with from the users table
+    messages = Messages.query.filter(
+     or_(
+         and_(Messages.user_id == current_user.id, Messages.contact_id == user_to_chatwith.id),
+         and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
+     )).order_by(Messages.time).all()  
+    ai_message = None
     if request.method== 'POST':
         user_message=request.form.get('user_message')
         
         chat_messages = Messages(user_id= current_user.id, contact_id=user_to_chatwith.id, message=user_message)
-        ai_message = None
+        
         if user_contacts_entry.contact_name== 'N.O.B':
+            
             try:
                 contact_nob_message = NOB(user_message)
-            except:
+            except Exception as e:
+                print('error', e)
                 return redirect(url_for('routes.chat', id=id))
             ai_message = Messages(user_id= user_to_chatwith.id, contact_id=current_user.id, message=contact_nob_message)
             
@@ -91,16 +115,16 @@ def chat(id):
             if ai_message:
                 nob_db.session.add(ai_message)
             nob_db.session.commit()
-            print("Saved message:", chat_messages.user_id)
-            print("Saved message:", current_user.id)
-            #messages = Messages.query.filter((Messages.user_id==current_user.id and Messages.contact_id==contact.id) | (Messages.user_id==contact.id and Messages.contact_id==current_user.id)).all()
-            return redirect(url_for('routes.chat', id=id))
-        except Exception as e:
-            print(e)
-            return "Error 201: Failed to send message"
-    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
+            print("success")
+            # return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
 
-    # return render_template('chat.html', contacts=contacts, user=current_user, messages=messages, reverse_messages=reverse_messages, contact=contact)
+            return redirect(url_for('routes.chat_AI', id=id))
+
+        except Exception as e:
+            nob_db.session.rollback()
+            return flash("Error 201: Failed to send message")
+            
+    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
 
 @routes.route('/search', methods=['GET'])
 def search():

@@ -68,8 +68,8 @@
       
              {% endif %}
       <!-- Chat Input -->
-      <form action="/chat/{{ contact.id }}" method="POST" class="p-3 border-top d-flex">
-        <input id="message-box" type="text" name="user_message" class="form-control me-2" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
+      <form action="{% if user_to_chatwith.username in ['N.O.B', 'Dennis'] %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" class="p-3 border-top d-flex">
+        <input id="message-box" type="text" name="user_message" class="form-control me-2" rows="5" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
         <button type="submit" class="btn btn-success">Send</button>
       </form>
 
