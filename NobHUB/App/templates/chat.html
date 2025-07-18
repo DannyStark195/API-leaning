@@ -39,7 +39,7 @@
 
       <!-- Chat Body -->
        {% if messages %}
-       <div class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
+       <div id="message-display" class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
        {% for message in messages %}
   <div>
     <strong>
@@ -68,7 +68,7 @@
       
              {% endif %}
       <!-- Chat Input -->
-      <form action="{% if user_to_chatwith.username in ['N.O.B', 'Dennis'] %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" class="p-3 border-top d-flex">
+      <form action="{% if user_to_chatwith.username in ['N.O.B', 'Dennis'] %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="p-3 border-top d-flex">
         <input id="message-box" type="text" name="user_message" class="form-control me-2" rows="5" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
         <button type="submit" class="btn btn-success">Send</button>
       </form>
@@ -82,3 +82,69 @@
   </div>
 </div>
 {% endblock %}
+
+{%block scripts %}
+<script type="text/javascript">
+  var socketio = io();
+  var userId = "{{user.id}}";
+  var userName = "{{user.username}}";
+  var contactId = "{{user_to_chatwith.id}}";
+  var contactName = "{{user_to_chatwith.username}}";
+  var userId = "{{user.id}}";
+  
+     const messageBox = document.getElementById("message-box");
+     const newMessage= (user_id, contact_id, username, contact_name, message, time) =>{
+
+      var messageDisplayDiv = document.getElementById('message-display')
+      var messageDiv = document.createElement('div');
+      var senderName = "";
+      if(userName==username){
+        var senderName = "Me: "
+      }
+      else{
+        senderName = contactName;
+      }
+      const messageContent = `
+            
+    <strong>
+     ${senderName}
+        
+    </strong>
+      [ ${message} ]|<small> ${time}</small>
+       `
+ 
+    ;
+      messageDiv.innerHTML+=messageContent;
+      messageDisplayDiv.appendChild(messageDiv);
+
+      messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
+
+    };
+
+    socketio.on('send-message', (data) =>{
+      newMessage(data.user_id, data.contact_id, data.username, data.contact_name, data.message, data.time)
+
+    });
+    var messsageForm = document.getElementById('message-form');
+    var messageDisplayDiv = document.getElementById('message-display')
+    var messageDiv = document.createElement('div');
+
+    messsageForm.addEventListener('submit', ()=>{
+      event.preventDefault();
+    
+    messageContent = messageBox.value
+    if (messageContent){
+      socketio.emit('send-message', {data: messageContent})
+    };
+    messageContent = "";
+
+    messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
+    });
+
+</script> 
+
+{% endblock %}
+

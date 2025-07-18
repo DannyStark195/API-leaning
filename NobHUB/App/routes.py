@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash
+from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash, session
 from flask_login import login_required, current_user
 from .models import nob_db
 from .models import User, Contacts, Messages
 from .NOB_AI import NOB, Dennis
-from .events import socketio
+from .events import socketio, chat_spaces
 from sqlalchemy import or_, and_
 from .myWTF_Forms import SignupForm, LoginForm, EditForm
 from werkzeug.utils import secure_filename
@@ -17,7 +17,7 @@ def index():
 @login_required
 def home():
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()
-    print(contacts)
+    
     contact_yourself_exists = Contacts.query.filter_by(user_id=current_user.id, contact_id=current_user.id).first()  #check if user's self exists as a contacts
     
     nob_ai = User.query.filter_by(username='N.O.B').first()   #get user N.O.B
@@ -66,15 +66,14 @@ def chat(id):
          and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
      )).order_by(Messages.time).all()                                                                       #Get user and contacts messages
     print(messages)
-    # if user_to_chatwith.username== 'N.O.B' or user_to_chatwith.username=='Dennis':
-    #     return redirect(url_for('routes.chat_AI', id=id))
-   
-        # chat_messages = Messages(user_id= current_user.id, contact_id=user_to_chatwith.id, message=user_message)
-            #messages = Messages.query.filter((Messages.user_id==current_user.id and Messages.contact_id==contact.id) | (Messages.user_id==contact.id and Messages.contact_id==current_user.id)).all()
-        #     return redirect(url_for('routes.chat', id=id))
-        # except Exception as e:
-        #     print(e)
-        #     return "Error 201: Failed to send message"
+    chat_space = current_user.username+user_to_chatwith.username
+    if user_to_chatwith.username+current_user.username in chat_spaces:
+        chat_space = user_to_chatwith.username+current_user.username
+        chat_spaces[chat_space] = {"users": 0}
+    
+    session['chat_space'] = chat_space
+    session['contact_id'] = user_to_chatwith.id
+    session['contact_name'] = user_to_chatwith.username
     return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
 
 @routes.route('/chat/AI/<int:id>', methods=['GET', 'POST'])
