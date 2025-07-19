@@ -20,9 +20,15 @@
      
       <ul class="list-group">
          {% for contact in contacts %}
-         <img src="{{url_for('static', filename=contact.contact_image_path)}}" class="contact-profile-pic" alt="Contact Profile Picture">
-        <a href="/chat/{{ contact.id }}"><li class="list-group-item active">{{ contact.contact_name }}</li></a>
+         <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
+         {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
+         
+         <a href="/chat/AI/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
+        {% else %}
+        <a href="/chat/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
+        {% endif %}
         {% endfor %}
+        
       </ul>
       
     </div>
@@ -86,6 +92,12 @@
 {%block scripts %}
 <script type="text/javascript">
   var socketio = io();
+  socketio.on('connect', function(){
+    console.log("Websocket established")
+  });
+  socketio.on('disconnect', function(){
+    console.log("Websocket disconnected")
+  })
   var userId = "{{user.id}}";
   var userName = "{{user.username}}";
   var contactId = "{{user_to_chatwith.id}}";
@@ -112,7 +124,7 @@
     </strong>
       [ ${message} ]|<small> ${time}</small>
        `
- 
+    console.log(username);
     ;
       messageDiv.innerHTML+=messageContent;
       messageDisplayDiv.appendChild(messageDiv);
@@ -123,13 +135,13 @@
 
     socketio.on('send-message', (data) =>{
       newMessage(data.user_id, data.contact_id, data.username, data.contact_name, data.message, data.time)
-
+      
     });
-    var messsageForm = document.getElementById('message-form');
+    var messageForm = document.getElementById('message-form');
     var messageDisplayDiv = document.getElementById('message-display')
     var messageDiv = document.createElement('div');
 
-    messsageForm.addEventListener('submit', ()=>{
+    messageForm.addEventListener('submit', (event)=>{
       event.preventDefault();
     
     messageContent = messageBox.value

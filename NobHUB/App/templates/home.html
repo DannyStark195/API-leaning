@@ -20,9 +20,14 @@
 
       <ul class="list-group">
         <!-- Example Contact List -->
-         {% for contact in contacts%}
+         {% for contact in contacts %}
          <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
+         {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
+         
+         <a href="/chat/AI/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
+        {% else %}
         <a href="/chat/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
+        {% endif %}
         {% endfor %}
         
       </ul>

@@ -66,10 +66,10 @@ def chat(id):
          and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
      )).order_by(Messages.time).all()                                                                       #Get user and contacts messages
     print(messages)
-    chat_space = current_user.username+user_to_chatwith.username
-    if user_to_chatwith.username+current_user.username in chat_spaces:
-        chat_space = user_to_chatwith.username+current_user.username
-        chat_spaces[chat_space] = {"users": 0}
+    chat_space = current_user.username+' | '+user_to_chatwith.username
+    if user_to_chatwith.username+' | '+current_user.username in chat_spaces:
+        chat_space = user_to_chatwith.username+' | '+current_user.username
+    chat_spaces[chat_space] = {"users": 0}
     
     session['chat_space'] = chat_space
     session['contact_id'] = user_to_chatwith.id

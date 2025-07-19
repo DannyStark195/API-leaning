@@ -34,7 +34,7 @@ def handle_disconnect(sid=None):
         leave_room(chat_space)
         if chat_space in chat_spaces:
             chat_spaces[chat_space]["users"]-=1
-            if chat_spaces[chat_space] <=0 :
+            if chat_spaces[chat_space]["users"] <=0 :
                 chat_spaces.pop(chat_space)
         send({'username': username, 'message': "is offline"}, to=chat_space)
         print(f"{username} has left chat space {chat_space}")
@@ -60,7 +60,9 @@ def handle_send_message(data):
     try:
         nob_db.session.add(chat_messages)
 
-        nob_db.commit()
+        nob_db.session.commit()
+        chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message).first()
+        print(chat_message.message)
         chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message).first()
         timestamp = chat_message.time.strftime('%Y-%m-%d %H:%M')
         message_data={
@@ -70,12 +72,13 @@ def handle_send_message(data):
             'message': user_message,
             'time': timestamp
             }
-        send(message_data, to=chat_space)
+        emit('send-message', message_data, to=chat_space)
         
         print(f"{username}: Message: {user_message}")
         #emit('new-message', message_data, chats=)
-    except:
+    except Exception as e:
         nob_db.session.rollback()
+        print(e)
         return 
     
     
