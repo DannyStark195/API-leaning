@@ -7,7 +7,7 @@ socketio = SocketIO()
 active_users ={} 
 chat_spaces = {}
 @socketio.on("connect")
-def handle_connect(auth=None):
+def handle_connect(data, auth=None):
     if current_user.is_authenticated:
         user_id = current_user.id
         username = current_user.username
@@ -16,8 +16,9 @@ def handle_connect(auth=None):
             leave_room(chat_space)
             return
         join_room(chat_space)
-        send({'username': username, "message": "is online"}, to=chat_space)
+        emit({'username': username, "message": "is online"}, to=chat_space)
         chat_spaces[chat_space]["users"]+=1
+        chat_spaces[chat_space]["username"].append(username)
         print(f"{username} has joined chat space {chat_space}")
 
         # active_users[request.sid] ={'user_id': user_id, 'username': username}
@@ -34,6 +35,7 @@ def handle_disconnect(sid=None):
         leave_room(chat_space)
         if chat_space in chat_spaces:
             chat_spaces[chat_space]["users"]-=1
+            chat_spaces[chat_space]["username"].remove(username)
             if chat_spaces[chat_space]["users"] <=0 :
                 chat_spaces.pop(chat_space)
         send({'username': username, 'message': "is offline"}, to=chat_space)

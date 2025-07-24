@@ -93,7 +93,7 @@
 <script type="text/javascript">
   var socketio = io();
   socketio.on('connect', function(){
-    console.log("Websocket established")
+    console.log();
   });
   socketio.on('disconnect', function(){
     console.log("Websocket disconnected")
@@ -141,7 +141,12 @@
     var messageDisplayDiv = document.getElementById('message-display')
     var messageDiv = document.createElement('div');
 
+    var IsAI = {{'true' if user_to_chatwith.username in ['N.O.B', 'Dennis'] else 'false' }}
+
     messageForm.addEventListener('submit', (event)=>{
+      if(!IsAI){
+
+      
       event.preventDefault();
     
     messageContent = messageBox.value
@@ -151,6 +156,7 @@
     messageContent = "";
 
     messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
+  }
     });
     document.addEventListener('DOMContentLoaded', function(){
       messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;

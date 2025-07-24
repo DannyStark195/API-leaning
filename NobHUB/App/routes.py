@@ -69,7 +69,7 @@ def chat(id):
     chat_space = current_user.username+' | '+user_to_chatwith.username
     if user_to_chatwith.username+' | '+current_user.username in chat_spaces:
         chat_space = user_to_chatwith.username+' | '+current_user.username
-    chat_spaces[chat_space] = {"users": 0}
+    chat_spaces[chat_space] = {"users": 0, "username": []}
     
     session['chat_space'] = chat_space
     session['contact_id'] = user_to_chatwith.id
@@ -121,6 +121,7 @@ def chat_AI(id):
 
         except Exception as e:
             nob_db.session.rollback()
+            print(e)
             return flash("Error 201: Failed to send message")
             
     return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
