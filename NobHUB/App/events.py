@@ -3,6 +3,7 @@ from flask import request, session, current_app, flash
 from flask_login import current_user
 from flask_socketio import emit, join_room, leave_room, close_room, send
 from .models import User, Messages, nob_db
+from werkzeug.security import generate_password_hash, check_password_hash
 socketio = SocketIO()
 active_users ={} 
 chat_spaces = {}
@@ -52,6 +53,8 @@ def handle_send_message(data):
     user_message = data['data']
     print(user_message)
 
+    user_message_hashed = generate_password_hash(user_message,  method='pbkdf2:sha256')
+
     
     # contact_id = data.get('contact_id')
     # user_message = data.get('user_message')
@@ -82,6 +85,18 @@ def handle_send_message(data):
         nob_db.session.rollback()
         print(e)
         return 
+@socketio.on('typing')
+def handle_typing(data):
+    if not current_user.is_authenticated:
+        return
+    chat_space = session.get('chat_space')
+    emit('typing', {'typer': current_user.id}, to=chat_space)
+@socketio.on('stopped typing')
+def handle_stopped_typing(data):
+    if not current_user.is_authenticated:
+        return
+    chat_space = session.get('chat_space')
+    emit('stopped typing', {'typer': current_user.id}, to=chat_space)
     
     
     

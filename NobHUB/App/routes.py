@@ -170,6 +170,8 @@ def profile():
 @login_required
 def edit_profile():
     edit_form = EditForm()
+    user_as_contact_everywhere = Contacts.query.filter_by(contact_id= current_user.id, contact_name=current_user.username)
+    print(user_as_contact_everywhere)  
     if edit_form.validate_on_submit():
        
         edited_username = edit_form.username.data
@@ -182,12 +184,15 @@ def edit_profile():
             image_path = os.path.join(current_app.config['PROFILE_IMAGE_PATH'], imagename)
             edited_profile_pic.save(os.path.join('App/static', image_path))
             current_user.user_image_path = image_path
+        
         if edited_username:
             current_user.username = edited_username
+            user_as_contact_everywhere.update({'contact_name':edited_username }) 
         elif edited_user_email:
             current_user.user_email = edited_user_email
         elif edited_user_number:
             current_user.user_number = edited_user_number
+            user_as_contact_everywhere.update({'contact_number': edited_user_number})
         try:
             nob_db.session.commit()
             return redirect('/profile')

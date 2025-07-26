@@ -61,7 +61,7 @@
   </div>
 {% endfor %}
          
-         
+       
         </div>
  
         {% else %}
@@ -153,11 +153,42 @@
     if (messageContent){
       socketio.emit('send-message', {data: messageContent})
     };
-    messageContent = "";
+    messageBox.value = "";
 
     messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
   }
     });
+    var typing = false;
+    var typingIndicator = document.createElement('div');
+    var timeout;
+    messageBox.addEventListener('input', () =>{
+       if(!typing){
+        typing = true;
+       socketio.emit('typing', {typer: userId})
+       }
+
+       clearTimeout(timeout);
+       timeout = setTimeout(()=>{
+         typing = false;
+         socketio.emit('stopped typing', {typer: userId});
+
+       }, 2000)
+    });
+    socketio.on('typing', (data)=>{
+      if(data.typer!=userId){
+      typingIndicator.textContent = '...'
+      messageDisplayDiv.appendChild(typingIndicator);
+    }
+  })
+
+    socketio.on('stopped typing', (data)=>{
+      if(data.typer!=userId){
+      typingIndicator.textContent = ''
+      messageDisplayDiv.appendChild(typingIndicator);
+      }
+    })
+
+
     document.addEventListener('DOMContentLoaded', function(){
       messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
     });
