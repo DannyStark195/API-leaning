@@ -2,7 +2,9 @@ from flask_socketio import SocketIO
 from flask import request, session, current_app, flash
 from flask_login import current_user
 from flask_socketio import emit, join_room, leave_room, close_room, send
+from .security import encrypt_message, decrypt_message
 from .models import User, Messages, nob_db
+
 from werkzeug.security import generate_password_hash, check_password_hash
 socketio = SocketIO()
 active_users ={} 
@@ -53,22 +55,22 @@ def handle_send_message(data):
     user_message = data['data']
     print(user_message)
 
-    user_message_hashed = generate_password_hash(user_message,  method='pbkdf2:sha256')
+    user_message_hashed = encrypt_message(user_message)
 
     
     # contact_id = data.get('contact_id')
     # user_message = data.get('user_message')
     contact_id = session.get('contact_id')
     contact_name = session.get('contact_name')
-    chat_messages = Messages(user_id=current_user.id, contact_id=contact_id, message=user_message)
+    chat_messages = Messages(user_id=current_user.id, contact_id=contact_id, message=user_message_hashed)
     
     try:
         nob_db.session.add(chat_messages)
 
         nob_db.session.commit()
-        chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message).first()
+        chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message_hashed).first()
         print(chat_message.message)
-        chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message).first()
+        chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message_hashed).first()
         timestamp = chat_message.time.strftime('%Y-%m-%d %H:%M')
         message_data={
             'user_id': current_user.id,

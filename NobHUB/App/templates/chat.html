@@ -47,7 +47,7 @@
        {% if messages %}
        <div id="message-display" class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
        {% for message in messages %}
-  <div>
+  <div id= "inner-message-display">
     <strong>
       {% if message.user_id== user.id%}
         Me: 
@@ -57,13 +57,13 @@
         {{ user_to_chatwith.username}}:
         {% endif %}
     </strong>
-      [ {{ message.message }} ]|<small>{{ message.time.strftime('%Y-%m-%d %H:%M') }}</small>
+      [ {{ decrypt_user_message(message.message) }} ]|<small>{{ message.time.strftime('%Y-%m-%d %H:%M') }}</small>
   </div>
 {% endfor %}
-         
+
        
         </div>
- 
+      <div id="outer-message-display"></div>
         {% else %}
         <div class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
         
@@ -123,11 +123,13 @@
         
     </strong>
       [ ${message} ]|<small> ${time}</small>
+
        `
     console.log(username);
     ;
       messageDiv.innerHTML+=messageContent;
       messageDisplayDiv.appendChild(messageDiv);
+      
 
       messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
 
@@ -159,7 +161,7 @@
   }
     });
     var typing = false;
-    var typingIndicator = document.createElement('div');
+    var typingIndicator = document.getElementById('outer-message-display');
     var timeout;
     messageBox.addEventListener('input', () =>{
        if(!typing){
@@ -177,14 +179,14 @@
     socketio.on('typing', (data)=>{
       if(data.typer!=userId){
       typingIndicator.textContent = '...'
-      messageDisplayDiv.appendChild(typingIndicator);
+      // messageDisplayDiv.appendChild(typingIndicator);
     }
   })
 
     socketio.on('stopped typing', (data)=>{
       if(data.typer!=userId){
       typingIndicator.textContent = ''
-      messageDisplayDiv.appendChild(typingIndicator);
+      // messageDisplayDiv.appendChild(typingIndicator);
       }
     })
 

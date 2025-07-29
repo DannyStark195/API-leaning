@@ -6,6 +6,7 @@ from .NOB_AI import NOB, Dennis
 from .events import socketio, chat_spaces
 from sqlalchemy import or_, and_
 from .myWTF_Forms import SignupForm, LoginForm, EditForm
+from .security import encrypt_message, decrypt_message
 from werkzeug.utils import secure_filename
 import os
 # The routes.py define the routes for the different pages 
@@ -66,6 +67,11 @@ def chat(id):
          and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
      )).order_by(Messages.time).all()                                                                       #Get user and contacts messages
     print(messages)
+    decrypt_user_message = decrypt_message
+    message_test = Messages.query.filter_by(user_id = current_user.id).first()
+    if message_test:
+        print(message_test.message)
+
     chat_space = current_user.username+' | '+user_to_chatwith.username
     if user_to_chatwith.username+' | '+current_user.username in chat_spaces:
         chat_space = user_to_chatwith.username+' | '+current_user.username
@@ -74,7 +80,7 @@ def chat(id):
     session['chat_space'] = chat_space
     session['contact_id'] = user_to_chatwith.id
     session['contact_name'] = user_to_chatwith.username
-    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
+    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith, decrypt_user_message=decrypt_user_message)
 
 @routes.route('/chat/AI/<int:id>', methods=['GET', 'POST'])
 @login_required
