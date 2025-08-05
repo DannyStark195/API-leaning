@@ -57,7 +57,7 @@
         {{ user_to_chatwith.username}}:
         {% endif %}
     </strong>
-      [ {{ decrypt_user_message(message.message) }} ]|<small>{{ message.time.strftime('%Y-%m-%d %H:%M') }}</small>
+      [ {{ decrypt_user_message(message.message) }} ]|<small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
   </div>
 {% endfor %}
 
@@ -74,7 +74,7 @@
       
              {% endif %}
       <!-- Chat Input -->
-      <form action="{% if user_to_chatwith.username in ['N.O.B', 'Dennis'] %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="p-3 border-top d-flex">
+      <form action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="p-3 border-top d-flex">
         <input id="message-box" type="text" name="user_message" class="form-control me-2" rows="5" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
         <button type="submit" class="btn btn-success">Send</button>
       </form>
@@ -104,6 +104,7 @@
   var contactName = "{{user_to_chatwith.username}}";
   var userId = "{{user.id}}";
   
+
      const messageBox = document.getElementById("message-box");
      const newMessage= (user_id, contact_id, username, contact_name, message, time) =>{
 
@@ -116,13 +117,18 @@
       else{
         senderName = contactName;
       }
+      const localDate= new Date(time);
+      const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false}
+        
+      const formattedDateTime = localDate.toLocaleString(undefined, options);
+      
       const messageContent = `
             
     <strong>
      ${senderName}
         
     </strong>
-      [ ${message} ]|<small> ${time}</small>
+      [ ${message} ]|<small class="message-time"> ${formattedDateTime}</small>
 
        `
     console.log(username);
@@ -193,6 +199,16 @@
 
     document.addEventListener('DOMContentLoaded', function(){
       messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
+      const timeElement = document.querySelectorAll('.message-time');
+
+      timeElement.forEach(element => {
+        const utcTimestring = element.textContent.trim();
+        const localDate = new Date(utcTimestring);
+
+        const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false}
+        element.textContent = localDate.toLocaleString(undefined, options);
+      })
+
     });
 
 </script> 

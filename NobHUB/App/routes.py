@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, request, url_for, curren
 from flask_login import login_required, current_user
 from .models import nob_db
 from .models import User, Contacts, Messages
-from .NOB_AI import NOB, Dennis
+from .NOB_AI import NOB, Dennis, AIs
 from .events import socketio, chat_spaces
 from sqlalchemy import or_, and_
 from .myWTF_Forms import SignupForm, LoginForm, EditForm
@@ -80,7 +80,8 @@ def chat(id):
     session['chat_space'] = chat_space
     session['contact_id'] = user_to_chatwith.id
     session['contact_name'] = user_to_chatwith.username
-    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith, decrypt_user_message=decrypt_user_message)
+    
+    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith, decrypt_user_message=decrypt_user_message, AIs=AIs)
 
 @routes.route('/chat/AI/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -94,26 +95,29 @@ def chat_AI(id):
          and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
      )).order_by(Messages.time).all()  
     ai_message = None
+    decrypt_user_message = decrypt_message
     if request.method== 'POST':
         user_message=request.form.get('user_message')
-        
-        chat_messages = Messages(user_id= current_user.id, contact_id=user_to_chatwith.id, message=user_message)
+        user_message_hashed = encrypt_message(user_message)
+        chat_messages = Messages(user_id= current_user.id, contact_id=user_to_chatwith.id, message=user_message_hashed)
         
         if user_contacts_entry.contact_name== 'N.O.B':
             
             try:
                 contact_nob_message = NOB(user_message)
+                contact_nob_message_hashed = encrypt_message(contact_nob_message)
             except Exception as e:
                 print('error', e)
                 return redirect(url_for('routes.chat', id=id))
-            ai_message = Messages(user_id= user_to_chatwith.id, contact_id=current_user.id, message=contact_nob_message)
+            ai_message = Messages(user_id= user_to_chatwith.id, contact_id=current_user.id, message=contact_nob_message_hashed)
             
         if user_contacts_entry.contact_name== 'Dennis':
             try:
                 contact_dennis_message = Dennis(user_message)
+                contact_dennis_message_hashed = encrypt_message(contact_dennis_message)
             except:
                 return redirect(url_for('routes.chat', id=id))
-            ai_message = Messages(user_id= user_to_chatwith.id, contact_id=current_user.id, message=contact_dennis_message)
+            ai_message = Messages(user_id= user_to_chatwith.id, contact_id=current_user.id, message=contact_dennis_message_hashed)
            
         try:
             nob_db.session.add(chat_messages)
@@ -129,8 +133,8 @@ def chat_AI(id):
             nob_db.session.rollback()
             print(e)
             return flash("Error 201: Failed to send message")
-            
-    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
+         
+    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith, decrypt_user_message=decrypt_user_message, AIs=AIs)
 
 @routes.route('/search', methods=['GET'])
 def search():

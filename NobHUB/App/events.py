@@ -71,7 +71,9 @@ def handle_send_message(data):
         chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message_hashed).first()
         print(chat_message.message)
         chat_message = Messages.query.filter_by(user_id=current_user.id, contact_id=contact_id, message=user_message_hashed).first()
-        timestamp = chat_message.time.strftime('%Y-%m-%d %H:%M')
+        # timestamp = chat_message.time.strftime('%Y-%m-%d %H:%M')
+        timestamp = chat_message.time.isoformat()+ 'Z'
+        
         message_data={
             'user_id': current_user.id,
             'username': current_user.username,

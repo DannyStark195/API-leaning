@@ -8,6 +8,7 @@ def NOB(message):
     model="gemini-2.0-flash",
     config=types.GenerateContentConfig(
         system_instruction= current_app.config['SYSTEM_INSTRUCTION_NOB']),
+        # max_output_tokens=2000,
     contents= message)
     return response.text
 
@@ -17,9 +18,10 @@ def Dennis(message):
     model="gemini-2.0-flash",
     config=types.GenerateContentConfig(
         system_instruction= current_app.config['SYSTEM_INSTRUCTION_DENNIS']),
+        # max_output_tokens=3000,
     contents= message)
     return response.text
-
+AIs = ['N.O.B', 'Dennis']
 # from google import genai
 # from google.genai import types()
 # from PIL import Image
