@@ -1,16 +1,26 @@
 from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
+from authlib.integrations.flask_client import OAuth
 from .events import socketio
 from .models import nob_db, User
-from .routes import routes
-from .auth import auth
+# from .routes import routes
+# from .auth import auth
 from .admin import admin
 import secrets
 import os
 
 #The __init.py is like the settings and configuration of the flask app
 #create a Flask instance in a function and call it in run.py to run the app
+#Google OAUth login
+oauth = OAuth()
+# google = oauth.register(
+#     name = 'google',
+#     client_id = CLIENT_ID,
+#     client_secret =CLIENT_SECRET,
+#     server_meta_uri='https://accounts.google.com/.well-known/openid-configuration',
+#     client_kwargs={"scope":"openid profile email"}
+# )
 
 def create_app():
     load_dotenv()
@@ -27,13 +37,25 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 10*1024*1024 #Sets the limit to how large a file can be to be uploaded(10MB)
     app.config['ALLOWED_IMAGE_EXTENSIONS'] = ['.jpg', '.jpeg', '.png','.gif']
     app.config['PROFILE_IMAGE_PATH'] = 'User_profile_pics'
-    app.register_blueprint(routes) #registers the routes from the route.py and the auth.py
-    app.register_blueprint(auth)
-    app.register_blueprint(admin, url_prefix='/admin')
+    app.config['CLIENT_ID'] = os.environ.get('CLIENT_ID')
+    app.config['CLIENT_SECRET'] = os.environ.get('CLIENT_SECRET')
     nob_db.init_app(app) #initializes the database
     # Reference site for authentication: https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
     
     socketio.init_app(app)
+    
+    oauth.init_app(app) #Initialize oauth
+    from .routes import routes
+
+    app.register_blueprint(routes) #registers the routes from the route.py and the auth.py
+
+    from .auth import auth
+
+    app.register_blueprint(auth)
+    app.register_blueprint(admin, url_prefix='/admin')
+    
+    from .auth import init_google_oauth
+    init_google_oauth(app.config.get('CLIENT_ID'), app.config.get('CLIENT_SECRET'))
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
