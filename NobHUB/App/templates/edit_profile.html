@@ -22,10 +22,10 @@
                 {%endfor%}
             <label for="username" class="form-label">Username</label>
             <!-- <input type="text" name="username" id="username" placeholder="username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')"> -->
-            {{ edit_form.username(id="username", class="task-input", placeholder="Username", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
+            {{ edit_form.username(id="username", class="task-input", placeholder="Username")}}
             <label for="user_email" class="form-label">Email</label>
             <!-- <input type="email" name="user_email" id="user_email" placeholder="Email" class="task-input" required oninvalid="this.setCustomValidity('Email is required')" oninput="this.setCustomValidity('')"> -->
-            {{ edit_form.email(id="user_email", class="task-input", placeholder="Email", oninvalid="this.setCustomValidity('Email is required')", oninput="this.setCustomValidity('')")}}
+            {{ edit_form.email(id="user_email", class="task-input", placeholder="Email")}}
 
                         {% for error in edit_form.email.errors %}
                     <p>
@@ -36,7 +36,8 @@
     
             <label for="number" class="form-label">Phone Number</label>
             <!-- <input type="text" name="number" id="number" placeholder="" class="task-input"> -->
-            {{ edit_form.phoneNumber(id="number", class="task-input", placeholder="Phone Number", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
+            {{ edit_form.phoneNumber(id="number", class="task-input", placeholder="Phone Number")}}
+            
 
           
             <!-- <button type="submit" class="btn add-btn"> Save </button> -->

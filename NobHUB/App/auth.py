@@ -151,19 +151,22 @@ def authorize_google():
         user_info_endpoint = google.server_metadata['userinfo_endpoint']
         resp = google.get(user_info_endpoint)
         user_info = resp.json()
+
+        username_split = user_info['email'].split('@')
+        username = '@'.join(username_split[:-1])
+        print(username)
         user_email = user_info['email']
         print(user_email)
         user_or_email = User.query.filter_by(user_email=user_email).first()
         user_image_path= os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg')
         if not user_or_email:
-            new_user = User(username=user_email, user_email=user_email, user_number=f'{secrets.token_hex(16)}',user_password_hash=f'{secrets.token_hex(16)}',user_image_path=user_image_path)
+            new_user = User(username=username, user_email=user_email, user_number=f'{secrets.token_hex(16)}',user_password_hash=f'{secrets.token_hex(16)}',user_image_path=user_image_path)
                 
             nob_db.session.add(new_user)
                     
             nob_db.session.commit()
-            login_user(user_or_email)
-    
-                    
+        login_user(user_or_email)
+                 
     except Exception as e:
                 nob_db.session.rollback()
                 print(e)
