@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin #UserMixin will add Flask-Login attributes to the model so that Flask-Login will be able to work with it.
+from itsdangerous import  URLSafeTimedSerializer as Serializer
 from datetime import datetime
 
 # The models.py define the structure of the database. 
@@ -21,6 +22,19 @@ class User(UserMixin, nob_db.Model):
     user_contacts = nob_db.relationship('Contacts', backref='owner_user', lazy=True, primaryjoin="User.id==Contacts.user_id", overlaps="actual_contact_user") # A two way relationship between the user and their contacts and messages
     user_messages_sent = nob_db.relationship('Messages', backref='sender_user', lazy=True, primaryjoin="User.id==Messages.user_id", overlaps="user_messages_received")
     user_messages_received = nob_db.relationship('Messages',backref='recipient_user',lazy=True,primaryjoin="User.id == Messages.contact_id", overlaps="user_messages_sent")
+
+    def get_reset_token(self, expires_sec=600):
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
+
 class Contacts(nob_db.Model):
     id = nob_db.Column(nob_db.Integer, primary_key=True)
     user_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)

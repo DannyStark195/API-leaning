@@ -7,10 +7,12 @@ from sqlalchemy import or_, and_
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
-from .myWTF_Forms import SignupForm, LoginForm
+from flask_mail import Message
+from .myWTF_Forms import SignupForm, LoginForm, ResetPasswordForm
 from . import oauth
+from . import mail
 import secrets
 import os
 
@@ -40,14 +42,6 @@ def signup():
     if signup_form.validate_on_submit():
 
             user_password = signup_form.password0.data
-            confirm_user_password = signup_form.password1.data
-            # if user_password!= confirm_user_password:
-            #     flash("Passwords must be same")
-            #     return redirect(url_for('auth.signup'))
-            # elif len(user_password)<=5:
-            #     flash("Passwords must be greater than 5 digits")
-            #     return redirect(url_for('auth.signup'))
-            
             #Added and used lask wtf for form validation
             username= signup_form.username.data
             user_email= signup_form.email.data
@@ -175,19 +169,8 @@ def authorize_google():
     login_user(user_or_email)
     return redirect(url_for('routes.home'))
 
-    
-    
-
-
-
-
-
-
 
 # Authorize for google
-
-
-
 @auth.route('/profile_pic', methods=['GET'])
 def profile_pic():
     return render_template('profile_pic.html')
@@ -212,8 +195,42 @@ def upload_profile_pic():
 
     return redirect('/profile_pic')
 
-# @auth.route('/serve-images/<filename>', methods=['GET'])
-# def serve_image(filename):
-   
-#     return send_from_directory(current_app.config['PROFILE_IMAGE_PATH'], filename)
 
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('NobHUB: Reset Password Request', sender=current_app.config['EMAIL_USER'], recipients=[user.user_email])
+    msg.body = f'''To reset your password, visit the following link: {url_for('routes.reset_password', token=token, _external=True)}
+If you did not make this request simply ignore this email and no changes would be made.
+                '''
+@auth.route('/reset_password', methods=['GET', 'POST'])
+def request_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('auth.home'))
+    reset_form = ResetPasswordForm()
+    if reset_form.validate_on_submit():
+        user = User.query.filter_by(user_email=reset_form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password', 'info')
+        return redirect(url_for('auth.login'))
+    return render_template('request_reset.html', reset_form=reset_form)
+@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.verify_reset_token(token)
+    if not user:
+        flash('Token is invalid or expired', 'warning')
+        return redirect(url_for('auth.request_reset'))
+    
+    reset_form = ResetPasswordForm()
+    if reset_form.validate_on_submit():
+        user_password = reset_form.password0.data
+        confirm_user_password = reset_form.password1.data
+    
+        user_password_hashed = generate_password_hash(user_password, method='pbkdf2:sha256')
+        user.user_password_hash = user_password
+        nob_db.sesson.commit()
+        flash('Your password has been successfully Updated! You are now able to log in with new your password')
+        return redirect(url_for('auth.login')) 
+        
+    return render_template('reset_password.html', reset_form=reset_form)

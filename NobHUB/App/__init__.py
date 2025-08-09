@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from authlib.integrations.flask_client import OAuth
+from flask_mail import Mail
 from .events import socketio
 from .models import nob_db, User
 # from .routes import routes
@@ -21,7 +22,7 @@ oauth = OAuth()
 #     server_meta_uri='https://accounts.google.com/.well-known/openid-configuration',
 #     client_kwargs={"scope":"openid profile email"}
 # )
-
+mail = Mail()
 def create_app():
     load_dotenv()
     secret_key0 = secrets.token_hex(16)
@@ -39,6 +40,12 @@ def create_app():
     app.config['PROFILE_IMAGE_PATH'] = 'User_profile_pics'
     app.config['CLIENT_ID'] = os.environ.get('CLIENT_ID')
     app.config['CLIENT_SECRET'] = os.environ.get('CLIENT_SECRET')
+    app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+    app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
+    mail.init_app(app)
     nob_db.init_app(app) #initializes the database
     # Reference site for authentication: https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
     

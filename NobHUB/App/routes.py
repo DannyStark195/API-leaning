@@ -1,13 +1,13 @@
 from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash, session
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, login_user, logout_user
+from werkzeug.utils import secure_filename
+from sqlalchemy import or_, and_
 from .models import nob_db
 from .models import User, Contacts, Messages
 from .NOB_AI import NOB, Dennis, AIs
 from .events import socketio, chat_spaces
-from sqlalchemy import or_, and_
 from .myWTF_Forms import SignupForm, LoginForm, EditForm
 from .security import encrypt_message, decrypt_message
-from werkzeug.utils import secure_filename
 import os
 # The routes.py define the routes for the different pages 
 routes = Blueprint('routes',__name__)
@@ -212,3 +212,4 @@ def edit_profile():
 
     
     return render_template('edit_profile.html', user=current_user, edit_form=edit_form)
+
