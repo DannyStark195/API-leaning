@@ -24,16 +24,19 @@ class User(UserMixin, nob_db.Model):
     user_messages_received = nob_db.relationship('Messages',backref='recipient_user',lazy=True,primaryjoin="User.id == Messages.contact_id", overlaps="user_messages_sent")
 
     def get_reset_token(self, expires_sec=600):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+        print(f"Secret Key: {current_app.config['SECRET_KEY']} | Type: {type(current_app.config['SECRET_KEY'])}")
+    
+        s = Serializer(str(current_app.config['SECRET_KEY']))
+        
+        return s.dumps({'user_id': self.id})
     @staticmethod
-    def verify_reset_token(token):
-        s = Serializer(current_app.config['SECRET_KEY'])
+    def verify_reset_token(token, expires_sec=600):
+        s = Serializer(str(current_app.config['SECRET_KEY']))
         try:
-            user_id = s.loads(token)['user_id']
+            user_id = s.loads(token, max_age=expires_sec)
         except:
             return None
-        return User.query.get(user_id)
+        return User.query.get(user_id['user_id'])
 
 class Contacts(nob_db.Model):
     id = nob_db.Column(nob_db.Integer, primary_key=True)

@@ -10,7 +10,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 from flask_login import login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
 from flask_mail import Message
-from .myWTF_Forms import SignupForm, LoginForm, ResetPasswordForm
+from .myWTF_Forms import SignupForm, LoginForm, ResetPasswordForm, RequestResetForm
 from . import oauth
 from . import mail
 import secrets
@@ -198,25 +198,30 @@ def upload_profile_pic():
 
 def send_reset_email(user):
     token = user.get_reset_token()
-    msg = Message('NobHUB: Reset Password Request', sender=current_app.config['EMAIL_USER'], recipients=[user.user_email])
-    msg.body = f'''To reset your password, visit the following link: {url_for('routes.reset_password', token=token, _external=True)}
+    msg = Message('NobHUB: Reset Password Request', sender=current_app.config['MAIL_USERNAME'], recipients=[user.user_email])
+    msg.body = f'''To reset your password, visit the following link: {url_for('auth.reset_password', token=token, _external=True)}
 If you did not make this request simply ignore this email and no changes would be made.
                 '''
+    mail.send(msg)
 @auth.route('/reset_password', methods=['GET', 'POST'])
 def request_reset():
     if current_user.is_authenticated:
-        return redirect(url_for('auth.home'))
-    reset_form = ResetPasswordForm()
+        return redirect(url_for('routes.home'))
+    reset_form = RequestResetForm()
+    print("NO error")
     if reset_form.validate_on_submit():
+        print("NO error")
         user = User.query.filter_by(user_email=reset_form.email.data).first()
-        send_reset_email(user)
-        flash('An email has been sent with instructions to reset your password', 'info')
-        return redirect(url_for('auth.login'))
+        print(user)
+        if user:
+            send_reset_email(user)
+            flash('An email has been sent with instructions to reset your password', 'info')
+            return redirect(url_for('auth.login'))
     return render_template('request_reset.html', reset_form=reset_form)
 @auth.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('routes.home'))
     user = User.verify_reset_token(token)
     if not user:
         flash('Token is invalid or expired', 'warning')
@@ -226,10 +231,10 @@ def reset_password(token):
     if reset_form.validate_on_submit():
         user_password = reset_form.password0.data
         confirm_user_password = reset_form.password1.data
-    
+        print(user.user_email)
         user_password_hashed = generate_password_hash(user_password, method='pbkdf2:sha256')
-        user.user_password_hash = user_password
-        nob_db.sesson.commit()
+        user.user_password_hash = user_password_hashed
+        nob_db.session.commit()
         flash('Your password has been successfully Updated! You are now able to log in with new your password')
         return redirect(url_for('auth.login')) 
         

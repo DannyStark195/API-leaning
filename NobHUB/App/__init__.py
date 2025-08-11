@@ -31,7 +31,7 @@ def create_app():
     app.config['DEBUG'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nobdb.db' #configure database
     app.config['API_KEY'] = os.environ.get('API_KEY')  #configure gemini api-key
-    app.config['SECRET_KEY'] = secret_key0+secret_key1 #defines a secret key
+    app.config['SECRET_KEY'] = 'a-super-secret-key-that-is-very-long-and-secure' #defines a secret key
     app.config['SYSTEM_INSTRUCTION_NOB'] = os.environ.get('SYSTEM_INSTRUCTION_NOB')
     app.config['SYSTEM_INSTRUCTION_DENNIS'] = os.environ.get('SYSTEM_INSTRUCTION_DENNIS')
     app.config['ENCRYPTION_KEY']= os.environ.get('ENCRYPTION_KEY')
@@ -40,9 +40,10 @@ def create_app():
     app.config['PROFILE_IMAGE_PATH'] = 'User_profile_pics'
     app.config['CLIENT_ID'] = os.environ.get('CLIENT_ID')
     app.config['CLIENT_SECRET'] = os.environ.get('CLIENT_SECRET')
-    app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-    app.config['MAIL_PORT'] = 587
-    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
     app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
     mail.init_app(app)

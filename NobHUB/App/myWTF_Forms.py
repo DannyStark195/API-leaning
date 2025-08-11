@@ -26,9 +26,12 @@ class EditForm(FlaskForm):
     edit = SubmitField("CHANGE")
 
 class ResetPasswordForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired("Email is required"),Email(message="Enter a valid email")])
     password0 = PasswordField("Password", validators=[DataRequired(message="Password is required"),  Length(min=8, message="Passwords must be greater than 8 digits")])
     password1 = PasswordField("Password", validators=[DataRequired(message="Password is required"),EqualTo('password0', message="Passwords must be same")])
-    request = SubmitField("Request Reset")
     reset = SubmitField('Reset Password')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField("Email", validators=[Optional(), Email(message="Enter a valid email")])
+    request = SubmitField("Request Reset")
     
