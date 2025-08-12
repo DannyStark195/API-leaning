@@ -31,7 +31,7 @@ def create_app():
     app.config['DEBUG'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nobdb.db' #configure database
     app.config['API_KEY'] = os.environ.get('API_KEY')  #configure gemini api-key
-    app.config['SECRET_KEY'] = 'a-super-secret-key-that-is-very-long-and-secure' #defines a secret key
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') #defines a secret key
     app.config['SYSTEM_INSTRUCTION_NOB'] = os.environ.get('SYSTEM_INSTRUCTION_NOB')
     app.config['SYSTEM_INSTRUCTION_DENNIS'] = os.environ.get('SYSTEM_INSTRUCTION_DENNIS')
     app.config['ENCRYPTION_KEY']= os.environ.get('ENCRYPTION_KEY')
