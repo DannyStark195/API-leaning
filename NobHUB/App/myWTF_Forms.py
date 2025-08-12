@@ -19,10 +19,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField("GO")
 
 class EditForm(FlaskForm):
-    username = StringField('Username')
+    username = StringField('Username', validators=[Optional()])
     email = StringField("Email", validators=[Optional(),Email(message="Enter a valid email")])
-    phoneNumber = StringField('Phone Number')
-    profile_pic = FileField("Profile", validators=[FileAllowed(['jpg', 'jpeg', 'png','gif'], message='Please Upload an image')])
+    phoneNumber = StringField('Phone Number', validators=[Optional()])
+    profile_pic = FileField("Profile", validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png','gif'], message='Please Upload an image')])
     edit = SubmitField("CHANGE")
 
 class ResetPasswordForm(FlaskForm):

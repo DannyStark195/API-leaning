@@ -10,6 +10,16 @@
     
     <img src="{{url_for('static', filename=user.user_image_path)}}" alt="profilePic">
     
+    <div class="form-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+        
+            <div class="form-container" style="color: rgb(89, 193, 201)">
+                {{messages[0] }}
+            </div>
+            {% endif %}
+        {% endwith %}
+        
     
     <form action="" method="POST" class="task-form" enctype="multipart/form-data">
         {{edit_form.hidden_tag()}}

@@ -187,6 +187,15 @@ def edit_profile():
         edited_username = edit_form.username.data
         edited_user_email = edit_form.email.data
         edited_user_number = edit_form.phoneNumber.data
+        user= User.query.filter_by(username=edited_username).first()
+        email = User.query.filter_by(user_email=edited_user_email).first()
+        if user:
+                print("user:", user)
+                flash('Username already exist! Please use another')
+                return redirect(url_for('routes.edit_profile'))
+        if email:
+                flash('Email already registered! Please use another')
+                return redirect(url_for('routes.edit_profile'))
 
         edited_profile_pic = edit_form.profile_pic.data
         if edited_profile_pic:
