@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<div class="container-fluid">
-  <div class="row vh-100">
+<div class="container">
+  <div class="left-side">
     
     <!-- Left Panel: Still Contacts -->
-    <div class="col-md-4 bg-light border-end p-3">
+    <!-- <div class="col-md-4 bg-light border-end p-3"> -->
       <img src="{{url_for('static', filename=user.user_image_path)}}"  alt="Profile Picture" class="profilePic">
       <h4>{{ user.username }}</h4>
       <div class="search-container">
@@ -34,7 +34,7 @@
     </div>
 
     <!-- Right Panel: Chat Area -->
-    <div class="col-md-8 d-flex flex-column">
+    <div class="right-side">
       
       <!-- Chat Header -->
        <img src="{{url_for('static', filename=user_to_chatwith.user_image_path)}}" alt="Contact Profile Picture" class="contact-profile-pic">

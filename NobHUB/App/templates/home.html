@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block body %}
-<div class="container-fluid">
-  <div class="row vh-100">
+<div class="container">
+  <!-- <div class="row vh-100"> -->
     
     <!-- Left Panel: Contacts & Buttons -->
-    <div class="col-md-4 bg-light border-end p-3">
+    <div class="left-side">
       <img src="{{url_for('static', filename=user.user_image_path)}}" class="profilePic" alt="Profile Picture">
       <a href="/profile"><button class="btn btn-primary mb-3">Profile</button></a>
       <a href="/logout"><button class="btn btn-primary mb-3">Logout</button></a>
@@ -34,7 +34,7 @@
     </div>
 
     <!-- Right Panel: Empty Chat View -->
-    <div class="col-md-8 d-flex justify-content-center align-items-center">
+    <div class="right-side">
       <h4>Select a contact to start chatting 💬</h4>
         
      
