@@ -2,20 +2,26 @@
 
 {% block body %}
 <div class="container">
+  <img src="{{url_for('static', filename=user.user_image_path)}}"  alt="Profile Picture" class="profilePic">
+  <a href="/profile"><button class="btn btn-primary mb-3">Profile</button></a>
+      
+  <ul class="nav_icons"></ul>
+      
   <div class="left-side">
     
     <!-- Left Panel: Still Contacts -->
-    <!-- <div class="col-md-4 bg-light border-end p-3"> -->
-      <img src="{{url_for('static', filename=user.user_image_path)}}"  alt="Profile Picture" class="profilePic">
-      <h4>{{ user.username }}</h4>
+   <!-- <div class="header"> -->
       <div class="search-container">
+        <div>
         <form action="/search" method="GET" class="search-form">
             <input type="text" name="search" id="search" placeholder="Search NobHUB" >
-            <button type="submit" class="btn btn-primary mb-3">🔎</button>
+            <button type="submit"><ion-icon name="search-outline"></ion-icon></button>
         </form>
         </div>
-         <button class="btn btn-primary mb-3">➕ Add Contact</button>
-
+      </div>
+      <!-- </div> -->
+      <h4>{{ user.username }}</h4>
+      
       <h5>Contacts</h5>
      
       <ul class="list-group">
@@ -82,7 +88,7 @@
     </div>
         <div class="border-bottom p-3">
         
-        <h6><a href="/profile"><button class="btn btn-primary mb-3">Profile</button></a></h6>
+        <h6></h6>
       </div>
 
   </div>

@@ -18,10 +18,10 @@ body{
 
 .container{
     position: relative;
-    width: 1300px;
+    width: 1400px;
     max-width: 100%;
     background: #fff;
-    height: calc(100vh - 50px);
+    height: calc(100vh - 10px);
     box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06), 0 2px 5px 0 rgba(0,0,0,0.06);
     display: flex;
 }
@@ -29,34 +29,71 @@ body{
     position:relative;
     flex: 30%;
     background: #ccc;
+    border-right: 0.5px solid rgba(0,0,0,0.1);
 }
 .container .right-side{
     position: relative;
     flex: 70%;
     background: whitesmoke;
+    
 }
 .container .right-side::before {
     content: "";
+    position:  absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* height: 100%; */
+
+
+}
+.header{
+    position: relative;
+    width: 100%;
+    height: 50px;
+
 }
 
 .profilePic {
-            width: 150px;
-            height: 150px;
-            border-radius: 45%;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        border: 2px solid #ccc;
-         object-fit: cover;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            /* box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border: 2px solid #ccc;*/
+            object-fit: cover; 
+            position: relative;
         
     }
  img {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         border-radius: 45%;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        /* box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         border: 2px solid #ccc;
-         object-fit: cover;
+        object-fit: cover; */
         
     }
 
+.search-container{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    /* padding: 0 15px */
+}
+
+.search-container div {
+    width: 100%;
+}
+
+.search-container div input {
+    outline: none;
+   
+    border: none;
+    /* padding: 6px; */
+    height: 20px;
+}
 
         
