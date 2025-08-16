@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-<form action="/search" method="GET" class="search-form">
 
 <div class="container">
   <div class="sidebar">
@@ -25,10 +24,10 @@
     <!-- Left Panel: Contacts & Buttons -->
       <div class="sidebar-middle">
         
-        <div class="search-bar">
-          <input type="text" name="search" id="search" placeholder="Search NobHUB" >
-          <button type="submit" class="icon-button"><ion-icon name="search-outline"></ion-icon></button>
-        </div>
+      <form action="/search" method="GET" class="search-bar">
+      <input type="text" name="search" id="search" placeholder="Search NobHUB" >
+      <button type="submit"><ion-icon name="search-outline" class="search-outline"></ion-icon></button>
+      </form>
             
 
     <div class="contact-list">
@@ -62,6 +61,6 @@
       
   </div>
 </div>
-</form>
+
 
 {% endblock %}

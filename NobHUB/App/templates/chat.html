@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<form action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="p-3 border-top d-flex">
-    <form action="/search" method="GET" class="search-form">
 
 <div class="container">
    <div class="sidebar">
@@ -13,10 +11,10 @@
   
     <div class="profile">
     <img src="{{url_for('static', filename=user.user_image_path)}}"  alt="Profile Picture" class="profile-pic">
-    <p class="username">{{ user.username }}</p>
+    <h4 class="username">{{ user.username }}</h4>
   </div>
     
-    <div class="nav-buttons">
+     <div class="nav-buttons">
       <a href="/profile"><ion-icon name="person"></ion-icon></a>
       <a href="/edit_profile"><ion-icon name="pencil"></ion-icon></a>
       <a href="/logout"><ion-icon name="arrow-back"></ion-icon></a>
@@ -25,10 +23,12 @@
   </div>
     
   <div class="sidebar-middle">
-    <div class="search-bar">
+    <!-- <div class="search-bar"> -->
+      <form action="/search" method="GET" class="search-bar">
       <input type="text" name="search" id="search" placeholder="Search NobHUB" >
       <button type="submit"><ion-icon name="search-outline" class="search-outline"></ion-icon></button>
-    </div>
+      </form>
+    <!-- </div> -->
       
       
     <div class="contact-list">
@@ -61,19 +61,28 @@
        <div class="chat-messages">
        {% if messages %}
        {% for message in messages %}
-        <div class="message">
-          <strong>
+        <!-- <div class="message">
+          <strong> -->
       {% if message.user_id== user.id%}
-        Me: 
-        {% endif %}
+      <div class="message user-message">
+        <strong>
+         Me: 
+        </strong>
+        [ {{ decrypt_user_message(message.message) }} ]|<small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
+      </div>
+      {% endif %}
+        
       {%if message.user_id == user_to_chatwith.id %}
-       
+        <div class="message contact-message">
+        <strong>
         {{ user_to_chatwith.username}}:
-        {% endif %}
-    </strong>
-      [ {{ decrypt_user_message(message.message) }} ]|<small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
+        </strong>
+        [ {{ decrypt_user_message(message.message) }} ]|<small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
   
         </div>
+        {% endif %}
+      
+        <!-- </div> -->
         {% endfor %}
        
 
@@ -85,17 +94,21 @@
       
   {% endif %}
   </div>
+
       <!-- Chat Input -->
-      <div class="message-input">
+       
+      <!-- <div class="message-input"> -->
+      <form action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="message-input">
+
         <input id="message-box" type="text" name="user_message" class="form-control me-2" rows="5" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
         <button type="submit" class="btn btn-success">Send</button>
-       
-      </div>
-    
+        </form>
+
+      <!-- </div> -->
+
     </div>
 </div>
- </form>
-</form>
+
 
 {% endblock %}
 
