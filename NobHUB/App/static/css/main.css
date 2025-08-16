@@ -1,99 +1,146 @@
-/* For the base.html */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&display=swap');
+      *{
+       padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      }
+      .container{
+        display: flex;
+        height: 100vh;
+      }
+      .sidebar{
+        width: 10%; /* The side bar takes 20% of the horizontal space*/
+        display:flex;
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center; /* Aligns elemnts vertically center*/
+        padding: 20px; /* Gives a space between elements in the div */
+      }
+      
+      .app-header h2{
+        margin-bottom: 20px;
 
-*
-{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Open Sans', sans-serif;
-}
-body{
-    display: flex;
-    justify-content: right;
-    align-items:last baseline;
-    min-height: 100vh;
-    background: linear-gradient(#0ccef0 0%, #0ccef0 50px, #f5f7f1 50px,  #f5f7f1 100% ); 
-}
+      }
+      .profile{
+        text-align: center;
+        margin-bottom: 30px; /* increased the margin to push elements down*/
+      }
+      .profile-pic{
+        width: 100px;
+        height: 100px;
+        border-radius: 50%; 
+        margin-bottom: 10px;
+      }
+      
+      .nav-buttons a{
+        display:block;
+        width: 100%; 
+        margin: 5px 0; /* Increase the margin for each button at the top*/
+        padding:  10px;
+        border: none;
+        cursor: pointer;
+      }
 
-.container{
-    position: relative;
-    width: 1400px;
-    max-width: 100%;
-    background: #fff;
-    height: calc(100vh - 10px);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06), 0 2px 5px 0 rgba(0,0,0,0.06);
-    display: flex;
-}
-.container .left-side{
-    position:relative;
-    flex: 30%;
-    background: #ccc;
-    border-right: 0.5px solid rgba(0,0,0,0.1);
-}
-.container .right-side{
-    position: relative;
-    flex: 70%;
-    background: whitesmoke;
+      .sidebar-middle{
+         width: 35%; /* The middle bar takes additional 30% of the horizontal space*/
+        background-color: #ECE5DD; 
+        display: flex;
+        flex-direction: column;
+        }
+    .search-bar{
+        margin-top: 20px; 
+        padding: 20px;
+        }
+    .search-bar input{
+        width: 100%;
+        padding: 6px; /* Makes the search bar bigger */
+        border-radius: 10px ;
+        border: 1px solid #ccc;
+        outline: none;
+
+      }
+      .search-bar button{
+        border: none;
+      }
+    .contact-list{
+      flex-grow: 1; /* Fill remaining space */
+      overflow-y: auto ; /* Scroll when too many contacts */
+
+    }
+    .contact-header{
+       display: flex;
+      align-items: center;
+      padding: 10px;
+      flex-direction: column;
+    }
+    .contacts{
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      
+      }
+    .contacts img{
+      border-radius: 45%;
+      width: 40px;
+      height: 40px;
+      margin-right: 10px; /* Increases the space to right to move the contact name */
+      }
+      .chat-area{
+        flex-grow: 1; /* Take all remaining width */
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+    .chat-header{
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 15px;
+      background: #363838fb;
+      color: white;
+    }
+    .chat-header img{
+      border-radius: 45%;
+      width: 40px;
+      height: 40px;
+      margin-right: 15px;
+     
+    }
+    .chat-messages{
+      flex-grow: 1; /* Fill space between header & input */
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .message{
+      /* max-width: 60%; */
+      width: 30%;
+      margin-bottom: 10px;
+      padding: 10px;
+      padding-left: 20px;
+      border-radius: 10px;
+      background-color: #ccc;
+    }
+    .message-input{
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+      margin-bottom: 10px;
+
+    }
+    .message-input input{
+      flex-grow: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border-top: 1px solid #ccc;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+      outline: none;
+    }
+    .message-input button{
+      border: none;
+      padding: 10px 15px;
+      /* border-radius: 50%; */
+      cursor: pointer;
+
+
+    }
     
-}
-.container .right-side::before {
-    content: "";
-    position:  absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    /* height: 100%; */
-
-
-}
-.header{
-    position: relative;
-    width: 100%;
-    height: 50px;
-
-}
-
-.profilePic {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            /* box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            border: 2px solid #ccc;*/
-            object-fit: cover; 
-            position: relative;
-        
-    }
- img {
-        width: 45px;
-        height: 45px;
-        border-radius: 45%;
-        /* box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        border: 2px solid #ccc;
-        object-fit: cover; */
-        
-    }
-
-.search-container{
-    position: relative;
-    width: 100%;
-    height: 50px;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    /* padding: 0 15px */
-}
-
-.search-container div {
-    width: 100%;
-}
-
-.search-container div input {
-    outline: none;
-   
-    border: none;
-    /* padding: 6px; */
-    height: 20px;
-}
-
-        

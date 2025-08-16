@@ -1,60 +1,68 @@
 {% extends 'base.html' %}
 
 {% block body %}
+<form action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="p-3 border-top d-flex">
+    <form action="/search" method="GET" class="search-form">
+
 <div class="container">
-  <img src="{{url_for('static', filename=user.user_image_path)}}"  alt="Profile Picture" class="profilePic">
-  <a href="/profile"><button class="btn btn-primary mb-3">Profile</button></a>
-      
-  <ul class="nav_icons"></ul>
-      
-  <div class="left-side">
+   <div class="sidebar">
+     
+    <div class="app-header">
+      <h2>NobHUB</h2>
+    </div>
+  
+    <div class="profile">
+    <img src="{{url_for('static', filename=user.user_image_path)}}"  alt="Profile Picture" class="profile-pic">
+    <p class="username">{{ user.username }}</p>
+  </div>
     
-    <!-- Left Panel: Still Contacts -->
-   <!-- <div class="header"> -->
-      <div class="search-container">
-        <div>
-        <form action="/search" method="GET" class="search-form">
-            <input type="text" name="search" id="search" placeholder="Search NobHUB" >
-            <button type="submit"><ion-icon name="search-outline"></ion-icon></button>
-        </form>
+    <div class="nav-buttons">
+      <a href="/profile"><ion-icon name="person"></ion-icon></a>
+      <a href="/edit_profile"><ion-icon name="pencil"></ion-icon></a>
+      <a href="/logout"><ion-icon name="arrow-back"></ion-icon></a>
+    </div>
+  
+  </div>
+    
+  <div class="sidebar-middle">
+    <div class="search-bar">
+      <input type="text" name="search" id="search" placeholder="Search NobHUB" >
+      <button type="submit"><ion-icon name="search-outline" class="search-outline"></ion-icon></button>
+    </div>
+      
+      
+    <div class="contact-list">
+      <div class="contact-header">
+        <p>Contacts</p>
+      </div>
+
+      
+    {% for contact in contacts %}
+    <div class="contacts">
+      <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
+    {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
+        <a href="/chat/AI/{{ contact.id }}"><p>{{contact.contact_name}}</p></a>
+        {% else %}
+        <a href="/chat/{{ contact.id }}"><p>{{contact.contact_name}}</p></a>
+        {% endif %}
+        </div>
+        {% endfor %}
         </div>
       </div>
-      <!-- </div> -->
-      <h4>{{ user.username }}</h4>
-      
-      <h5>Contacts</h5>
-     
-      <ul class="list-group">
-         {% for contact in contacts %}
-         <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
-         {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
-         
-         <a href="/chat/AI/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
-        {% else %}
-        <a href="/chat/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
-        {% endif %}
-        {% endfor %}
-        
-      </ul>
-      
-    </div>
-
-    <!-- Right Panel: Chat Area -->
-    <div class="right-side">
-      
+      <!-- Right Panel: Chat Area -->
+    <div class="chat-area">
       <!-- Chat Header -->
-       <img src="{{url_for('static', filename=user_to_chatwith.user_image_path)}}" alt="Contact Profile Picture" class="contact-profile-pic">
-      <div class="border-bottom p-3">
-        
-        <h5>Chat with {{user_to_chatwith.username}}</h5>
+      <div class="chat-header">
+        <img src="{{url_for('static', filename=user_to_chatwith.user_image_path)}}" alt="Contact Profile Picture" class="contact-profile-pic">
+        <p>Chat with {{user_to_chatwith.username}}</p>
       </div>
 
       <!-- Chat Body -->
+       <div class="chat-messages">
        {% if messages %}
-       <div id="message-display" class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
        {% for message in messages %}
-  <div id= "inner-message-display">
-    <strong>
+        <div class="message">
+          <strong>
       {% if message.user_id== user.id%}
         Me: 
         {% endif %}
@@ -64,35 +72,31 @@
         {% endif %}
     </strong>
       [ {{ decrypt_user_message(message.message) }} ]|<small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
-  </div>
-{% endfor %}
-
-       
+  
         </div>
-      <div id="outer-message-display"></div>
+        {% endfor %}
+       
+
+      
         {% else %}
-        <div class="flex-grow-1 overflow-auto p-3" style="background-color:#f8f9fa;">
-        
-        <p>No Messages yet. </p>
-         
-         
+        <div class="message">
+          <p>No Messages yet. </p>
         </div>
       
-             {% endif %}
+  {% endif %}
+  </div>
       <!-- Chat Input -->
-      <form action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="p-3 border-top d-flex">
+      <div class="message-input">
         <input id="message-box" type="text" name="user_message" class="form-control me-2" rows="5" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
         <button type="submit" class="btn btn-success">Send</button>
-      </form>
-
-    </div>
-        <div class="border-bottom p-3">
-        
-        <h6></h6>
+       
       </div>
-
-  </div>
+    
+    </div>
 </div>
+ </form>
+</form>
+
 {% endblock %}
 
 {%block scripts %}

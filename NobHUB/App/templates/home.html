@@ -1,62 +1,67 @@
 {% extends 'base.html' %}
 {% block body %}
+<form action="/search" method="GET" class="search-form">
+
 <div class="container">
-  <!-- <div class="row vh-100"> -->
-    <img src="{{url_for('static', filename=user.user_image_path)}}" class="profilePic" alt="Profile Picture">
-      <a href="/profile"><button class="btn btn-primary mb-3">Profile</button></a>
-      <a href="/logout"><button class="btn btn-primary mb-3">Logout</button></a>
-      
-    
-    <!-- Left Panel: Contacts & Buttons -->
-    <div class="left-side">
-      <!-- <div class="header"> -->
-        <div class="search-container">
-        <form action="/search" method="GET" class="search-form">
-            <input type="text" name="search" id="search" placeholder="Search NobHUB" >
-            <button type="submit"><ion-icon name="search-outline"></ion-icon></button>
-        </form>
-    </div>
-      <!-- </div> -->
-      
-      <h4>{{ user.username }}</h4>
-      <h5>Contacts</h5>
-       
-      <ul class="list-group">
-        <!-- Example Contact List -->
-         {% for contact in contacts %}
-         <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
-         {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
-         
-         <a href="/chat/AI/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
-        {% else %}
-        <a href="/chat/{{ contact.id }}"><li class="list-group-item">{{contact.contact_name}}</li></a>
-        {% endif %}
-        {% endfor %}
-        
-      </ul>
+  <div class="sidebar">
+
+    <div class="app-header">
+      <h2>NobHUB</h2>
     </div>
 
-    <!-- Right Panel: Empty Chat View -->
-    <div class="right-side">
-      <h4>Select a contact to start chatting 💬</h4>
-        
-     
-      <h6>
-         <br>
-         <br>
-         <br>
-         <br>
-        <p><small>Your messages are encrypted😁</small></p>
-        </h6>
+    <div class="profile">
+      <img src="{{url_for('static', filename=user.user_image_path)}}" class="profile-pic" alt="Profile Picture">
+        <h4 class="username">{{ user.username }}</h4>
+    </div>
       
-      
-      
-      
-      
+    <div class="nav-buttons">
+      <a href="/profile"><ion-icon name="person"></ion-icon></a>
+      <a href="/edit_profile"><ion-icon name="pencil"></ion-icon></a>
+      <a href="/logout"><ion-icon name="arrow-back"></ion-icon></a>
     </div>
     
+    </div>
+    
+    <!-- Left Panel: Contacts & Buttons -->
+      <div class="sidebar-middle">
+        
+        <div class="search-bar">
+          <input type="text" name="search" id="search" placeholder="Search NobHUB" >
+          <button type="submit" class="icon-button"><ion-icon name="search-outline"></ion-icon></button>
+        </div>
+            
+
+    <div class="contact-list">
+      <div class="contact-header">
+        <p>Contacts</p>
+      </div>
+    
+
+  {% for contact in contacts %}
+    <div class="contacts">
+      <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
+  {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
+        <a href="/chat/AI/{{ contact.id }}"><p>{{contact.contact_name}}</p></a>
+        {% else %}
+        <a href="/chat/{{ contact.id }}"><p>{{contact.contact_name}}</p></a>
+  {% endif %}
+    </div>
+  {% endfor %}
+    </div>
+  </div>
+    <!-- Right Panel: Empty Chat View -->
+    <div class="chat-area">
+      <div class="chat-header">
+    
+      </div>
+      <div class="chat-messages">
+        <h4>Select a contact to start chatting 💬</h4>
+      
+        <p><small>Your messages are encrypted😁</small></p>
+      </div>
+      
   </div>
 </div>
- </div>
-</div>
+</form>
+
 {% endblock %}
