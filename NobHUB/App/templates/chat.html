@@ -68,7 +68,12 @@
         <strong>
          Me: 
         </strong>
-        [ {{ decrypt_user_message(message.message) }} ]|<small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
+        [ {{ decrypt_user_message(message.message) }} ]
+        <a href="/edit_message/{{message.id}}"><ion-icon name="ellipsis-vertical-outline"></ion-icon></a>
+        <a href="/delete_message/{{message.id}}"><ion-icon name="trash-outline"></ion-icon></a>
+        
+        
+        <small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
       </div>
       {% endif %}
         
@@ -77,8 +82,10 @@
         <strong>
         {{ user_to_chatwith.username}}:
         </strong>
-        [ {{ decrypt_user_message(message.message) }} ]|<small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
-  
+        
+        [ {{ decrypt_user_message(message.message) }} ]
+        <small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
+        
         </div>
         {% endif %}
       

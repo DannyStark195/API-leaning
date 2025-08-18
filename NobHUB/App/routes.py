@@ -222,3 +222,21 @@ def edit_profile():
     
     return render_template('edit_profile.html', user=current_user, edit_form=edit_form)
 
+@routes.route('/edit_message/<int:id>', methods=['GET', 'POST'])
+def edit_message(id):
+    message_to_edit = Messages.query.get_or_404(id)                                                                      #Get user and contacts messages
+    print(message_to_edit.id)
+    print(message_to_edit.message)
+    return f"{message_to_edit.id}"
+@routes.route('/delete_message/<int:id>', methods=['GET', 'POST'])
+def delete_message(id):
+     message_to_delete = Messages.query.get_or_404(id)
+     try:
+        # Delete the task from the database and commit the changes
+        nob_db.session.delete(message_to_delete)
+        nob_db.session.commit()
+        return redirect('/home')
+     except:
+        # Handle any errors that occur during the deletion process
+        flash('Could not delete message. Try again')
+        return redirect('/home')
