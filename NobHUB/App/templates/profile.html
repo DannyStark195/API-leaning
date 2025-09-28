@@ -3,28 +3,30 @@
 {% block body %}
 
 <div class="content">
-    <div class="action-container">
-        <a href="/home" class="btn back-btn">Back</a>
+    <div class="nav-buttons">
+      <a href="/home"><ion-icon name="arrow-back"></ion-icon></a>
     </div>
     <h1 class="title">Profile</h1>
-     <a href="/edit_profile"><button class="btn btn-primary mb-3">Edit Profile</button></a>
-
     
-        <img src="{{url_for('static', filename=user.user_image_path)}}" alt="profilePic">
-    
-    
+    <div class="form-container">
+      <div class="side-by-side">
+        <img src="{{url_for('static', filename=user.user_image_path)}}" class="profile-pic" alt="profilePic">
+        <div class="nav-buttons">
+        <a href="/edit_profile" class=""><ion-icon name="pencil" class="brand-clr-b"></ion-icon></a>
+        </div>
+        </div>
     <form action="" method="POST" class="task-form" enctype="multipart/form-data">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label brand-clr-b">Username</label>
             <!-- <input type="text" name="username" id="username" placeholder="username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')"> -->
                 <label>{{ user.username }}</label>
-            <label for="user_email" class="form-label">Email</label>
+            <label for="user_email" class="form-label brand-clr-b">Email</label>
             <!-- <input type="email" name="user_email" id="user_email" placeholder="Email" class="task-input" required oninvalid="this.setCustomValidity('Email is required')" oninput="this.setCustomValidity('')"> -->
                 <label>{{ user.user_email }}</label>
     
-            <label for="number" class="form-label">Phone Number</label>
+            <label for="number" class="form-label brand-clr-b">Phone Number</label>
             <label>{{ user.user_number }}</label>
         </form>
-        
+    </div>  
     </div>
     
 

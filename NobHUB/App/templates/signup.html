@@ -6,15 +6,17 @@
     <div class="action-container">
         <a href="/" class="btn back-btn">Back</a>
     </div>
-    <h1 class="title">New User</h1>
+    <h1 class="title">Sign UP</h1>
     
-    <img src="" alt="profilePic">
+    <div class="form-container">
+
+    <!-- <img src="" alt="profilePic"> -->
     
     <div class="form-container">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
         
-            <div class="form-container" style="color: rgb(89, 193, 201)">
+            <div class="form-container brand-clr-b" >
                 {{messages[0] }} Go to  <a href="/login"><button class="btn btn-primary mb-3">Login</button></a>
             
             </div>
@@ -23,17 +25,17 @@
         
     <form action="" method="POST" class="task-form" enctype="multipart/form-data">
         {{signup_form.hidden_tag()}}
-            <label class="form-label">Profile Pic</label>
+            <label class="form-label brand-clr-b">Profile Pic</label>
                 {{ signup_form.profile_pic() }}
                 {% for error in signup_form.profile_pic.errors %}
             <div class="form-container" style="color: rgb(89, 193, 201)">
                 {{ error }}            
             </div>
                             {% endfor%}
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label brand-clr-b">Username</label>
             <!-- <input type="text" name="username" id="username" placeholder="username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')"> -->
             {{ signup_form.username(id="username", class="task-input", placeholder="Username", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
-            <label for="user_email" class="form-label">Email</label>
+            <label for="user_email" class="form-label brand-clr-b">Email</label>
             <!-- <input type="email" name="user_email" id="user_email" placeholder="Email" class="task-input" required oninvalid="this.setCustomValidity('Email is required')" oninput="this.setCustomValidity('')"> -->
             {{ signup_form.email(id="user_email", class="task-input", placeholder="Email", oninvalid="this.setCustomValidity('Email is required')", oninput="this.setCustomValidity('')")}}
                 {% for error in signup_form.email.errors %}
@@ -42,17 +44,17 @@
             </div>
                             {% endfor%}
                         
-            <label for="number" class="form-label">Phone Number</label>
+            <label for="number" class="form-label brand-clr-b">Phone Number</label>
             <!-- <input type="text" name="number" id="number" placeholder="" class="task-input"> -->
             {{ signup_form.phoneNumber(id="number", class="task-input", placeholder="Phone Number", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
 
-            <label for="password0" class="form-label">PassWord </label>
+            <label for="password0" class="form-label brand-clr-b">PassWord </label>
                 <div class="password">
                     <input type="checkbox" id="togglePassword" class="password-toggle">
             <label for="togglePassword" class="toggle-eye open">
                 <ion-icon name="eye-outline"></ion-icon>
             </label>
-            <label for="togglePassword" class="toggle-eye close">
+            <label for="togglePassword" class="toggle-eye close brand-clr-b">
                 <ion-icon name="eye-off-outline"></ion-icon>
             </label>
                 <!-- <input type="password" name="password0" id="password0" placeholder="Password" class="password-input" required > -->
@@ -70,7 +72,7 @@
                             {{ error }} 
                         </div>
                             {% endfor%}
-            <label for="password1" class="form-label">PassWord </label>
+            <label for="password1" class="form-label brand-clr-b">PassWord </label>
             <div class="password">
                 <!-- <input type="password" name="password1" id="password1" placeholder="Confirm PassWord" class="password-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')"> -->
                 {{ signup_form.password1(id="password1", class="password-input", placeholder="Confirm Password", oninvalid="this.setCustomValidity('PassWord is required')", oninput="this.setCustomValidity('')")}}
@@ -79,11 +81,12 @@
             <!-- <button type="submit" class="btn add-btn"> Save </button> -->
              {{ signup_form.submit(class="btn add-btn", id="signup-btn")}}
              <input type="button", value="Signup with Google", class="btn add-btn" onclick="window.location.href='/login/google'">
+             <a href="/login"><div class="btn add-btn">Login</div></a>
         </form>
         
     </div>
     
 
 </div>
-
+</div>
 {% endblock %}

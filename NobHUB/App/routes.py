@@ -125,7 +125,6 @@ def chat_AI(id):
                 nob_db.session.add(ai_message)
             nob_db.session.commit()
             print("success")
-            # return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith)
 
             return redirect(url_for('routes.chat_AI', id=id))
 
@@ -148,9 +147,7 @@ def search():
 def add_contact(id):
     contact_found = User.query.get_or_404(id) # get a user if they exist
     contact = Contacts(user_id=current_user.id,contact_id=contact_found.id, contact_name=contact_found.username, contact_number=contact_found.user_number, contact_image_path=contact_found.user_image_path)
-    # contact = Contacts(user_id=current_user.id,contact_name=contact_found.username, contact_number=contact_found.user_number, contact_image_path='static/images/defaultimg.jpg')
     reverse_contact = Contacts(user_id=contact_found.id, contact_id=current_user.id, contact_name=current_user.username, contact_number=current_user.user_number, contact_image_path=current_user.user_image_path)
-    #reverse_contact = Contacts(user_id=contact_found.id,contact_name=current_user.username, contact_number=current_user.user_number, contact_image_path='static/images/defaultimg.jpg')
 
     if contact_found.username == current_user.username:
         return redirect('/home')

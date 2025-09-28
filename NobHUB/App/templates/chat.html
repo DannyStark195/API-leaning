@@ -17,7 +17,7 @@
      <div class="nav-buttons">
       <a href="/profile"><ion-icon name="person"></ion-icon></a>
       <a href="/edit_profile"><ion-icon name="pencil"></ion-icon></a>
-      <a href="/logout"><ion-icon name="arrow-back"></ion-icon></a>
+      <a href="/home"><ion-icon name="arrow-back"></ion-icon></a>
     </div>
   
   </div>
@@ -32,7 +32,7 @@
       
       
     <div class="contact-list">
-      <div class="contact-header">
+      <div class="contact-header brand-clr-b">
         <p>Contacts</p>
       </div>
 
@@ -58,13 +58,13 @@
       </div>
 
       <!-- Chat Body -->
-       <div class="chat-messages">
+       <div class="chat-messages" id="chat-messages">
        {% if messages %}
        {% for message in messages %}
         <!-- <div class="message">
           <strong> -->
       {% if message.user_id== user.id%}
-      <div class="message user-message">
+      <div class="message user-message " id="message user-message">
         <strong>
          Me: 
         </strong>
@@ -95,24 +95,19 @@
 
       
         {% else %}
-        <div class="message">
+        <div class="chat-messages whitish-text center-div">
           <p>No Messages yet. </p>
         </div>
       
   {% endif %}
   </div>
 
-      <!-- Chat Input -->
-       
-      <!-- <div class="message-input"> -->
+      
       <form action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="message-input">
 
         <input id="message-box" type="text" name="user_message" class="form-control me-2" rows="5" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
         <button type="submit" class="btn btn-success">Send</button>
         </form>
-
-      <!-- </div> -->
-
     </div>
 </div>
 
@@ -138,7 +133,7 @@
      const messageBox = document.getElementById("message-box");
      const newMessage= (user_id, contact_id, username, contact_name, message, time) =>{
 
-      var messageDisplayDiv = document.getElementById('message-display')
+      var messageDisplayDiv = document.getElementById('chat-messages')
       var messageDiv = document.createElement('div');
       var senderName = "";
       if(userName==username){
@@ -153,14 +148,17 @@
       const formattedDateTime = localDate.toLocaleString(undefined, options);
       
       const messageContent = `
-            
+    <div class="message user-message">    
     <strong>
      ${senderName}
         
     </strong>
-      [ ${message} ]|<small class="message-time"> ${formattedDateTime}</small>
-
-       `
+      [${message} ]
+        <a href=""><ion-icon name="ellipsis-vertical-outline"></ion-icon></a>
+        <a href=""><ion-icon name="trash-outline"></ion-icon></a>
+      <small class="message-time"> ${formattedDateTime}</small>
+      </div> 
+      `
     console.log(username);
     ;
       messageDiv.innerHTML+=messageContent;
@@ -176,7 +174,7 @@
       
     });
     var messageForm = document.getElementById('message-form');
-    var messageDisplayDiv = document.getElementById('message-display')
+    var messageDisplayDiv = document.getElementById('chat-messages')
     var messageDiv = document.createElement('div');
 
     var IsAI = {{'true' if user_to_chatwith.username in ['N.O.B', 'Dennis'] else 'false' }}

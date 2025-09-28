@@ -111,8 +111,7 @@ def login():
             flash('Password is incorrect!')
             return redirect(url_for('auth.login'))
         login_user(user_or_email)
-        # socket.emit('join_global_chat', {'user':user_or_emial'})
-        # #return NOB(f"Hello I am {username}")
+       
         
         return redirect(url_for('routes.home'))
     return render_template('login.html',login_form=login_form)

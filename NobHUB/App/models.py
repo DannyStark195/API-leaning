@@ -29,6 +29,7 @@ class User(UserMixin, nob_db.Model):
         s = Serializer(str(current_app.config['SECRET_KEY']))
         
         return s.dumps({'user_id': self.id})
+    
     @staticmethod
     def verify_reset_token(token, expires_sec=600):
         s = Serializer(str(current_app.config['SECRET_KEY']))
@@ -46,7 +47,7 @@ class Contacts(nob_db.Model):
     contact_number = nob_db.Column(nob_db.String(200), nullable=False)
     contact_image_path =  nob_db.Column(nob_db.String(200), nullable=False)
     actual_contact_user = nob_db.relationship('User', primaryjoin="Contacts.contact_id==User.id", lazy=True, overlaps= "user_contacts, user_messages_sent, user_messages_received")
-    #messages = nob_db.relationship('Messages', backref='contact', lazy=True)
+
 class Messages(nob_db.Model):
     id = nob_db.Column(nob_db.Integer, primary_key=True)
     user_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)

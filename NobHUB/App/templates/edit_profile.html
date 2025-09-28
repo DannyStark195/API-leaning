@@ -3,18 +3,22 @@
 {% block body %}
 
 <div class="content">
-    <div class="action-container">
+    <!-- <div class="action-container">
         <a href="/profile" class="btn back-btn">Back</a>
+    </div> -->
+    
+   
+     <div class="nav-buttons">
+      <a href="/profile"><ion-icon name="arrow-back"></ion-icon></a>
     </div>
-    <h1 class="title">EDIT</h1>
-    
-    <img src="{{url_for('static', filename=user.user_image_path)}}" alt="profilePic">
-    
+  <h1 class="title">Edit</h1>
     <div class="form-container">
+        <img src="{{url_for('static', filename=user.user_image_path)}}" alt="profilePic" class="profile-pic">
+
         {% with messages = get_flashed_messages() %}
             {% if messages %}
         
-            <div class="form-container" style="color: rgb(89, 193, 201)">
+            <div class="form-container brand-clr-b">
                 {{messages[0] }}
             </div>
             {% endif %}
@@ -23,17 +27,17 @@
     
     <form action="" method="POST" class="task-form" enctype="multipart/form-data">
         {{edit_form.hidden_tag()}}
-            <label class="form-label">Profile Pic</label>
+            <label class="form-label brand-clr-b">Profile Pic</label>
                 {{ edit_form.profile_pic() }}
                 {% for error in edit_form.profile_pic.errors%}
                     <p>
                         {{error}}
                     </p>
                 {%endfor%}
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label brand-clr-b">Username</label>
             <!-- <input type="text" name="username" id="username" placeholder="username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')"> -->
             {{ edit_form.username(id="username", class="task-input", placeholder="Username")}}
-            <label for="user_email" class="form-label">Email</label>
+            <label for="user_email" class="form-label brand-clr-b">Email</label>
             <!-- <input type="email" name="user_email" id="user_email" placeholder="Email" class="task-input" required oninvalid="this.setCustomValidity('Email is required')" oninput="this.setCustomValidity('')"> -->
             {{ edit_form.email(id="user_email", class="task-input", placeholder="Email")}}
 
@@ -44,7 +48,7 @@
                     </p>
                             {% endfor%}
     
-            <label for="number" class="form-label">Phone Number</label>
+            <label for="number" class="form-label brand-clr-b">Phone Number</label>
             <!-- <input type="text" name="number" id="number" placeholder="" class="task-input"> -->
             {{ edit_form.phoneNumber(id="number", class="task-input", placeholder="Phone Number")}}
             

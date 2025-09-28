@@ -15,13 +15,7 @@ import os
 #create a Flask instance in a function and call it in run.py to run the app
 #Google OAUth login
 oauth = OAuth()
-# google = oauth.register(
-#     name = 'google',
-#     client_id = CLIENT_ID,
-#     client_secret =CLIENT_SECRET,
-#     server_meta_uri='https://accounts.google.com/.well-known/openid-configuration',
-#     client_kwargs={"scope":"openid profile email"}
-# )
+
 mail = Mail()
 def create_app():
     load_dotenv()

@@ -26,7 +26,6 @@ def login_post():
         flash('Password is incorrect!')
         return redirect(url_for('admin.login'))
     login_user(admin)
-    #return NOB(f"Hello I am {username}")
     return redirect('/home')
 @admin.route('/logout')
 @login_required

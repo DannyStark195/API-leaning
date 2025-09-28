@@ -1,29 +1,30 @@
 {% extends 'base.html' %}
 
 {% block body %}
- <div class="col-md-4 bg-light border-end p-3">
-      <h5>Contacts</h5>
+<div class="">
+   <div class="">
        <div class="search-container">
-        <form action="/search" method="GET" class="search-form">
+            <form action="/search" method="GET" class="search-bar">
             <input type="text" name="search" id="search" placeholder="Search NobHUB" >
-            <button type="submit" class="btn btn-primary mb-3">🔎</button>
+            <button type="submit"><ion-icon name="search-outline" class="search-outline"></ion-icon></button>
         </form>
         </div>
-        <div>
-      <ul class="list-group">
-        <!-- Example Contact List -->
+       
+        <div class="contact-list">
+      
+          <div class="contacts">
          {% if users %}
           {% for user in users %}
-        <button class="btn btn-primary mb-3">{{user.username}} </button>
-           <a href="/add/{{user.id}}"><button class="btn btn-primary mb-3">➕ Add Contact</button></a>
-
-            <hr>     
+                  <img src="{{url_for('static', filename=user.user_image_path)}}" class="profile-pic" alt="profilePic">
+                  <a href=""><p>{{user.username}} </p></a>
+           <a href="/add/{{user.id}}"><button class="btn add-btn">➕ Add Contact</button></a>    
         {% endfor %}  
         
-      </ul>
+      </div>
       {%else%}
         <p> '{{ users_to_find}}' not found</p>
         {% endif %}
     </div>
   </div>
-       {% endblock %}
+  </div>
+{% endblock %}

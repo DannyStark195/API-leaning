@@ -23,11 +23,6 @@ def handle_connect(data, auth=None):
         chat_spaces[chat_space]["users"]+=1
         chat_spaces[chat_space]["username"].append(username)
         print(f"{username} has joined chat space {chat_space}")
-
-        # active_users[request.sid] ={'user_id': user_id, 'username': username}
-        # chat_spaces.setdefault('global_chat', []).append(request.sid)
-        #join_room('global_chat')
-        
         print("User connected")
     return
 @socketio.on('disconnect')
