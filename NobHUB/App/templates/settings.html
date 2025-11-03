@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <title>NOBHUB</title>
+
+  <style>
+  </style>
+</head>
+<body class="middle-light-theme">
+  <main class="forms-main middle-light-theme">
+        
+    
+        <div class="forms light-theme">
+            <h1 class="title garamond-font"> 
+                 <ion-icon name="settings-outline"></ion-icon>
+                <i>Settings</i>
+            </h1> 
+            
+                <p>Theme</p>
+                <p class="forms-input" >
+                    light theme 
+                     <ion-icon name="radio-button-off-outline" class="theme"></ion-icon>
+                    <!-- <ion-icon name="menu-outline" class="theme"></ion-icon> -->
+                </p>
+            
+            </div>
+    </div>
+    
+  </main>
+
+  
+  <script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
+</body>
+</html>

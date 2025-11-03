@@ -13,7 +13,7 @@ import os
 routes = Blueprint('routes',__name__)
 @routes.route('/')
 def index():
-    return render_template('base.html')
+    return render_template('index.html')
 @routes.route('/home', methods=["GET", "POST"])
 @login_required
 def home():
@@ -45,7 +45,7 @@ def home():
             return redirect('/home')
         except Exception as e:
             nob_db.session.rollback() # go back to previous state before commit
-            #print(e)
+            print(e)
             return "Error: 101"
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()  
     return render_template('home.html', contacts=contacts, user=current_user)
@@ -184,6 +184,7 @@ def edit_profile():
         edited_username = edit_form.username.data
         edited_user_email = edit_form.email.data
         edited_user_number = edit_form.phoneNumber.data
+        edited_user_about = edit_form.about.data
         user= User.query.filter_by(username=edited_username).first()
         email = User.query.filter_by(user_email=edited_user_email).first()
         if user:
@@ -209,6 +210,9 @@ def edit_profile():
         elif edited_user_number:
             current_user.user_number = edited_user_number
             user_as_contact_everywhere.update({'contact_number': edited_user_number})
+        elif edited_user_about:
+            current_user.user_about = edited_user_about
+            # user_as_contact_everywhere.update({'contact_number': edited_user_number})
         try:
             nob_db.session.commit()
             return redirect('/profile')
@@ -237,3 +241,8 @@ def delete_message(id):
         # Handle any errors that occur during the deletion process
         flash('Could not delete message. Try again')
         return redirect('/home')
+
+@routes.route('/settings', methods=['GET'])
+@login_required
+def settings():
+    return render_template('settings.html')

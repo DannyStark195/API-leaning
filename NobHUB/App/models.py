@@ -15,8 +15,9 @@ nob_db = SQLAlchemy()
 class User(UserMixin, nob_db.Model):
     id = nob_db.Column(nob_db.Integer, primary_key=True)
     username = nob_db.Column(nob_db.String(20), nullable=False)
-    user_number = nob_db.Column(nob_db.String(200), nullable=False)
+    user_number = nob_db.Column(nob_db.String(200), nullable=True)
     user_email = nob_db.Column(nob_db.String(100), nullable=False)
+    user_about = nob_db.Column(nob_db.String(200), nullable=False)
     user_password_hash = nob_db.Column(nob_db.String(200), nullable=False)
     user_image_path =  nob_db.Column(nob_db.String(200), nullable=False)
     user_contacts = nob_db.relationship('Contacts', backref='owner_user', lazy=True, primaryjoin="User.id==Contacts.user_id", overlaps="actual_contact_user") # A two way relationship between the user and their contacts and messages
@@ -44,7 +45,7 @@ class Contacts(nob_db.Model):
     user_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)
     contact_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)  
     contact_name = nob_db.Column(nob_db.String(20), nullable=False)
-    contact_number = nob_db.Column(nob_db.String(200), nullable=False)
+    contact_number = nob_db.Column(nob_db.String(200), nullable=True)
     contact_image_path =  nob_db.Column(nob_db.String(200), nullable=False)
     actual_contact_user = nob_db.relationship('User', primaryjoin="Contacts.contact_id==User.id", lazy=True, overlaps= "user_contacts, user_messages_sent, user_messages_received")
 

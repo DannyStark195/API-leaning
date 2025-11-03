@@ -1,7 +1,12 @@
 from google import genai
 from google.genai import types
 from flask import current_app #gives access to the current app running and all its resources
-
+import re
+def format_text(text):
+    text = re.sub(r'\*(.*?)\*', r'<b>\1</b>', text)
+    text = text.replace('*', '')
+    formatted_text = text
+    return formatted_text
 def NOB(message):
     client = genai.Client(api_key=current_app.config["API_KEY"])
     response = client.models.generate_content(
@@ -10,7 +15,7 @@ def NOB(message):
         system_instruction= current_app.config['SYSTEM_INSTRUCTION_NOB']),
         # max_output_tokens=2000,
     contents= message)
-    return response.text
+    return format_text(response.text)
 
 def Dennis(message):
     client = genai.Client(api_key=current_app.config["API_KEY"])
@@ -20,32 +25,5 @@ def Dennis(message):
         system_instruction= current_app.config['SYSTEM_INSTRUCTION_DENNIS']),
         # max_output_tokens=3000,
     contents= message)
-    return response.text
+    return format_text(response.text)
 AIs = ['N.O.B', 'Dennis']
-# from google import genai
-# from google.genai import types()
-# from PIL import Image
-# from io import BytesIO
-# import base64
-
-# client = genai.Client()
-
-# contents = ('Hi, can you create a 3d rendered image of a pig '
-#             'with wings and a top hat flying over a happy '
-#             'futuristic scifi city with lots of greenery?')
-
-# response = client.models.generate_content(
-#     model="gemini-2.0-flash-preview-image-generation",
-#     contents=contents,
-#     config=types.GenerateContentConfig(
-#       response_modalities=['TEXT', 'IMAGE']
-#     )
-# )
-
-# for part in response.candidates[0].content.parts:
-#   if part.text is not None:
-#     print(part.text)
-#   elif part.inline_data is not None:
-#     image = Image.open(BytesIO((part.inline_data.data)))
-#     image.save('gemini-native-image.png')
-#     image.show()

@@ -65,7 +65,7 @@ def signup():
                 return redirect(url_for('auth.signup'))
 
             user_password_hashed = generate_password_hash(user_password, method='pbkdf2:sha256')
-            new_user = User(username=username, user_email=user_email, user_number=user_number,user_password_hash=user_password_hashed,user_image_path=user_image_path)
+            new_user = User(username=username, user_email=user_email, user_about="Hi I'm using Nobhub!", user_number=user_number,user_password_hash=user_password_hashed,user_image_path=user_image_path)
             
             
             try:
@@ -73,10 +73,10 @@ def signup():
                 nob_ai_exists = User.query.filter_by(username='N.O.B').first()
                 dennis_ai_exists = User.query.filter_by(username='Dennis').first()
                 if not nob_ai_exists:
-                    nob_ai = User(username='N.O.B', user_number='0000001', user_email='nob@ai.com', user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))
+                    nob_ai = User(username='N.O.B', user_number='0000001', user_email='nob@ai.com', user_about="Hi I'm using Nobhub!", user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))
                     nob_db.session.add(nob_ai)
                 if not dennis_ai_exists:
-                    dennis_ai = User(username='Dennis', user_number='0000002', user_email='dennis@ai.com', user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))
+                    dennis_ai = User(username='Dennis', user_number='0000002', user_email='dennis@ai.com', user_about="Hi I'm using Nobhub!", user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))
                     nob_db.session.add(dennis_ai)
                 
             
@@ -136,6 +136,7 @@ def login_google():
         # This will now print the exact error message
         print(f"Error during login: {e}")
         return "An error occurred. Check the server logs for details.", 500
+# Authorize for google
 @auth.route('/authorize/google')
 def authorize_google():
 
@@ -167,33 +168,6 @@ def authorize_google():
     session['oauth_token'] = token
     login_user(user_or_email)
     return redirect(url_for('routes.home'))
-
-
-# Authorize for google
-@auth.route('/profile_pic', methods=['GET'])
-def profile_pic():
-    return render_template('profile_pic.html')
-
-@auth.route('/upload_profile_pic', methods=['POST'])
-def upload_profile_pic():
-    try:
-        file = request.files['profilePic']
-    except RequestEntityTooLarge:
-        flash("File is larger than 10MB limt")
-        return redirect(url_for('auth.profile_pic'))
-    extension = os.path.splitext(file.filename)[1]
-    if file:
-        if extension not in current_app.config['ALLOWED_IMAGE_EXTENSIONS']:
-            flash('File is not an image')
-            return redirect(url_for('auth.profile_pic'))
-        image_name = secure_filename(file.filename)
-        imgpath = os.path.join(current_app.config['PROFILE_IMAGE_PATH'], image_name)
-        file.save(imgpath)
-        
-        return render_template('profile_pic.html', image_name=image_name)
-
-    return redirect('/profile_pic')
-
 
 def send_reset_email(user):
     token = user.get_reset_token()

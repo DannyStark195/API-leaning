@@ -6,24 +6,25 @@ from flask_wtf.file import FileField, FileAllowed
 class SignupForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(message="Username is required")])
     email = StringField("Email", validators=[DataRequired(message="Email is required"),Email(message="Enter a valid email address")])
-    phoneNumber = StringField("Phone Number", validators=[DataRequired(message="Phone Number is required")])
+    phoneNumber = StringField("Phone Number", validators=[Optional()])
     password0 = PasswordField("Password", validators=[DataRequired(message="Password is required"),  Length(min=8, message="Passwords must be greater than 8 digits")])
     password1 = PasswordField("Password", validators=[DataRequired(message="Password is required"),EqualTo('password0', message="Passwords must be same")])
     profile_pic = FileField("Profile",validators=[FileAllowed( ['jpg', 'jpeg', 'png','gif'], message='Please Upload an image!')])
-    submit = SubmitField("Save")
+    submit = SubmitField("Register")
 
 class LoginForm(FlaskForm):
 
     username = StringField("Username", validators=[DataRequired(message="Username is required")])
     user_password = PasswordField("Password", validators=[DataRequired(message="Password is required")])
-    submit = SubmitField("GO")
+    submit = SubmitField("Login")
 
 class EditForm(FlaskForm):
     username = StringField('Username', validators=[Optional()])
     email = StringField("Email", validators=[Optional(),Email(message="Enter a valid email")])
     phoneNumber = StringField('Phone Number', validators=[Optional()])
+    about = StringField('About', validators=[Optional()])
     profile_pic = FileField("Profile", validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png','gif'], message='Please Upload an image')])
-    edit = SubmitField("CHANGE")
+    edit = SubmitField("Edit")
 
 class ResetPasswordForm(FlaskForm):
     password0 = PasswordField("Password", validators=[DataRequired(message="Password is required"),  Length(min=8, message="Passwords must be greater than 8 digits")])

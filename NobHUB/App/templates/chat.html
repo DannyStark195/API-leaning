@@ -1,245 +1,256 @@
-{% extends 'base.html' %}
+{% extends 'home.html' %} 
+{% block title%}Nobhub chat{% endblock %}
+{%block left_side%}
+  <!-- Left Panel: Contacts & Buttons -->
+  <div class="left-side chat-leftside light-theme">
+            <div class="chat-header">
+              <h1 class="title garamond-font">
+                <!-- <ion-icon name="mail"></ion-icon> -->
+                <ion-icon name="chatbubble-ellipses"></ion-icon>
+                <i>Nobhub</i>
+              </h1>
+              <ion-icon name="menu-outline" class="menu-btn"></ion-icon>
+                    <div class="menu light-theme">
+                      <a href="/home" class="chat-link light-theme">
+                        <div class="menu-options">
+                            <ion-icon name="home-outline"></ion-icon>
+                            <p>Home</p>
+                        </div>
+                      </a>
+                      <a href="/profile" class="chat-link light-theme">
+                        <div class="menu-options">
+                            <ion-icon name="person-outline"></ion-icon>
+                            <p>Profile</p>
+                        </div>
+                      </a>
+                      <a href="/settings" class="chat-link light-theme">
+                        <div class="menu-options">
+                            <ion-icon name="settings-outline"></ion-icon>
+                            <p>Settings</p>
+                        </div>
+                      </a>
 
-{% block body %}
+                      <a href="/logout" class="chat-link light-theme">
+                        <div class="menu-options red-clr">
+                            <ion-icon name="log-out-outline"></ion-icon>
+                            <p>Sign out</p>
+                        </div>
+                      </a>
+                    </div>
 
-<div class="container">
-   <div class="sidebar">
-     
-    <div class="app-header">
-      <h2>NobHUB</h2>
-    </div>
+                    <div class="add-contact">
+                        <a href="/users"><ion-icon name="add"></ion-icon></a>
+                    </div>
+            </div>
+
+                
   
-    <div class="profile">
-    <img src="{{url_for('static', filename=user.user_image_path)}}"  alt="Profile Picture" class="profile-pic">
-    <h4 class="username">{{ user.username }}</h4>
-  </div>
     
-     <div class="nav-buttons">
-      <a href="/profile"><ion-icon name="person"></ion-icon></a>
-      <a href="/edit_profile"><ion-icon name="pencil"></ion-icon></a>
-      <a href="/home"><ion-icon name="arrow-back"></ion-icon></a>
-    </div>
-  
-  </div>
-    
-  <div class="sidebar-middle">
-    <!-- <div class="search-bar"> -->
-      <form action="/search" method="GET" class="search-bar">
-      <input type="text" name="search" id="search" placeholder="Search NobHUB" >
-      <button type="submit"><ion-icon name="search-outline" class="search-outline"></ion-icon></button>
+      <div class="chat-main">
+
+      <form action="/search" method="GET" >
+        <input type="text" name="search" id="search" class="search-bar margin-inline-start middle-light-theme" placeholder="Search Nobhub" >
       </form>
-    <!-- </div> -->
-      
-      
-    <div class="contact-list">
-      <div class="contact-header brand-clr-b">
-        <p>Contacts</p>
-      </div>
+            
 
-      
-    {% for contact in contacts %}
-    <div class="contacts">
-      <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
-    {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
-        <a href="/chat/AI/{{ contact.id }}"><p>{{contact.contact_name}}</p></a>
+    
+    
+
+  {% for contact in contacts %}
+  {% if contact.contact_name in ['N.O.B', 'Dennis'] %}
+    <a href="/chat/AI/{{ contact.id }}" class="chat-link middle-light-theme">
+      <div class="contact">
+        <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
+        <div class="">
+
+          <p class="contact-name">{{contact.contact_name}}</p>
+          <p class="contact-last-message">Hi there</p>
+        </div>
+      </div>
+    </a>
         {% else %}
-        <a href="/chat/{{ contact.id }}"><p>{{contact.contact_name}}</p></a>
-        {% endif %}
-        </div>
-        {% endfor %}
-        </div>
-      </div>
-      <!-- Right Panel: Chat Area -->
-    <div class="chat-area">
-      <!-- Chat Header -->
-      <div class="chat-header">
-        <img src="{{url_for('static', filename=user_to_chatwith.user_image_path)}}" alt="Contact Profile Picture" class="contact-profile-pic">
-        <p>Chat with {{user_to_chatwith.username}}</p>
-      </div>
+    <a href="/chat/{{ contact.id }}" class="chat-link light-theme">
+      <div class="contact">
+        <img src="{{ url_for('static', filename=contact.contact_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
+        <div class="">
 
-      <!-- Chat Body -->
-       <div class="chat-messages" id="chat-messages">
-       {% if messages %}
-       {% for message in messages %}
-        <!-- <div class="message">
-          <strong> -->
-      {% if message.user_id== user.id%}
-      <div class="message user-message " id="message user-message">
-        <strong>
-         Me: 
-        </strong>
-        [ {{ decrypt_user_message(message.message) }} ]
-        <a href="/edit_message/{{message.id}}"><ion-icon name="ellipsis-vertical-outline"></ion-icon></a>
-        <a href="/delete_message/{{message.id}}"><ion-icon name="trash-outline"></ion-icon></a>
-        
-        
-        <small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
+          <p class="contact-name">{{contact.contact_name}}</p>
+          <p class="contact-last-message">Hi there</p>
+        </div>
       </div>
-      {% endif %}
-        
-      {%if message.user_id == user_to_chatwith.id %}
-        <div class="message contact-message">
-        <strong>
-        {{ user_to_chatwith.username}}:
-        </strong>
-        
-        [ {{ decrypt_user_message(message.message) }} ]
-        <small class="message-time">{{ message.time.isoformat()+'Z' }}</small>
-        
-        </div>
-        {% endif %}
-      
-        <!-- </div> -->
-        {% endfor %}
-       
-
-      
-        {% else %}
-        <div class="chat-messages whitish-text center-div">
-          <p>No Messages yet. </p>
-        </div>
-      
+    </a>
   {% endif %}
+  {% endfor %}
+  </div>
+  </div>
+  {% endblock %}
+
+{% block right_side %}
+<!-- Right Panel: Chat Area -->
+<div class="right-side chat-rightside light-theme">
+  <!-- Chat Header -->
+  <div class="chat-header light-theme">
+    <a href="/home" class="light-theme"><ion-icon name="arrow-back-outline"></ion-icon></a>
+    <img src="{{url_for('static', filename=user_to_chatwith.user_image_path)}}" alt="Contact profile picture" />
+    <p>{{user_to_chatwith.username}}</p>
   </div>
 
-      
-      <form action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}" method="POST" id="message-form" class="message-input">
-
-        <input id="message-box" type="text" name="user_message" class="form-control me-2" rows="5" placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')" autocomplete="on">
-        <button type="submit" class="btn btn-success">Send</button>
-        </form>
+  <!-- Chat Body -->
+  <div class="chat-main middle-light-theme" id="chat-messages">
+    {% if messages %} {% for message in messages %} {% if message.user_id==
+    user.id%}
+    <div class="chat-message user-message">
+      <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>
+      <div class="menu position-slightly-lower light-theme">
+        <div class="menu-options">
+          <p href="" class="edit-message">
+            <a href="/edit_message/{{message.id}}">Edit</a>
+          </p>
+        </div>
+        <div class="menu-options red-clr">
+          <a href="/delete_message/{{message.id}}">delete</a>
+        </div>
+      </div>
+       {{ decrypt_user_message(message.message) }} 
+      <time class="chat-message-time">{{ message.time.isoformat()+'Z' }}</time>
     </div>
+    {% endif %} {%if message.user_id == user_to_chatwith.id %}
+    <div class="chat-message contact-message light-theme">
+      <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>
+      <div class="menu position-slightly-lower">
+        <div class="menu-options red-clr">
+          <a>delete</a>
+        </div>
+      </div>
+       {{ decrypt_user_message(message.message) | safe }} 
+      <time class="chat-message-time">{{ message.time.isoformat()+'Z' }}</time>
+    </div>
+    {% endif %} {% endfor %} {% else %}
+    <!-- <div class="no-message-div"> -->
+      <!-- <div class="no-message"> -->
+        <!-- <h2 class="garamond-font">Select a contact to start chatting</h2> -->
+        <!-- <p>No messages selected</p> -->
+      <!-- </div> -->
+    <!-- </div> -->
+
+    {% endif %}
+    <div id="typing-message-display"></div>
+  </div>
+
+  <form
+    action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}"
+    method="POST" id="message-form" class="chat-form">
+    <input id="message-box" type="text" name="user_message" class="search-bar" cols="5" placeholder="Type a message..."
+      required oninvalid="this.setCustomValidity('Can\'t send empty message')" oninput="this.setCustomValidity('')"
+      autocomplete="on" />
+    <button type="submit" class="chat-send-btn">
+      <ion-icon name="send"></ion-icon>
+    </button>
+  </form>
+
+  <div class="dark-overlay">
+    <!-- <div class="forms light-theme">
+      <h2 class="">
+        <a href=""><ion-icon name="arrow-back-outline"></ion-icon></a>
+        Edit message
+      </h2>
+      <form
+        action="{% if user_to_chatwith.username in AIs %}/chat/AI/{{ contact.id }}{% else %}/chat/{{ contact.id }}{% endif %}"
+        method="POST" id="message-form" class="chat-form">
+        <input id="message-box" type="text" name="user_message" class="search-bar edit-bar" rows="5"
+          placeholder="Type a message..." required oninvalid="this.setCustomValidity('Can\'t send empty message')"
+          oninput="this.setCustomValidity('')" autocomplete="on" />
+        <button type="submit" class="chat-send-btn">
+          <ion-icon name="send-outline"></ion-icon>
+        </button>
+      </form>
+    </div> -->
+    <!-- <div class="forms light-theme">
+            <p>Are you sure you want to delete message?</p>
+            <div class="side-by-side">
+                  <a href="">No</a> <a href="">yes</a>
+            </div> -->
+  </div>
 </div>
 
 
-{% endblock %}
-
-{%block scripts %}
 <script type="text/javascript">
+  // Ensure socket.io client is loaded before this runs (home.html includes it)
   var socketio = io();
-  socketio.on('connect', function(){
-    console.log();
-  });
-  socketio.on('disconnect', function(){
-    console.log("Websocket disconnected")
-  })
-  var userId = "{{user.id}}";
-  var userName = "{{user.username}}";
-  var contactId = "{{user_to_chatwith.id}}";
-  var contactName = "{{user_to_chatwith.username}}";
-  var userId = "{{user.id}}";
-  
+  socketio.on('connect', function(){ console.log('socket connected', socketio.id); });
+  socketio.on('disconnect', function(){ console.log('Websocket disconnected'); });
 
-     const messageBox = document.getElementById("message-box");
-     const newMessage= (user_id, contact_id, username, contact_name, message, time) =>{
+  // Server-side values (rendered into JSON) so the JS is valid
+  var userId = {{ user.id | tojson }};
+  var userName = {{ user.username | tojson }};
+  var contactId = {{ user_to_chatwith.id | tojson }};
+  var IsAI = {{ (user_to_chatwith.username in AIs) | tojson }};
 
-      var messageDisplayDiv = document.getElementById('chat-messages')
-      var messageDiv = document.createElement('div');
-      var senderName = "";
-      if(userName==username){
-        var senderName = "Me: "
-      }
-      else{
-        senderName = contactName;
-      }
-      const localDate= new Date(time);
-      const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false}
-        
-      const formattedDateTime = localDate.toLocaleString(undefined, options);
-      
-      const messageContent = `
-    <div class="message user-message">    
-    <strong>
-     ${senderName}
-        
-    </strong>
-      [${message} ]
-        <a href=""><ion-icon name="ellipsis-vertical-outline"></ion-icon></a>
-        <a href=""><ion-icon name="trash-outline"></ion-icon></a>
-      <small class="message-time"> ${formattedDateTime}</small>
-      </div> 
-      `
-    console.log(username);
-    ;
-      messageDiv.innerHTML+=messageContent;
-      messageDisplayDiv.appendChild(messageDiv);
-      
+  // Cache DOM nodes
+  var messageDisplayDiv = document.getElementById('chat-messages');
+  var messageBox = document.getElementById('message-box');
+  var messageForm = document.getElementById('message-form');
+  var typingIndicator = document.getElementById('typing-message-display');
 
-      messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
-
-    };
-
-    socketio.on('send-message', (data) =>{
-      newMessage(data.user_id, data.contact_id, data.username, data.contact_name, data.message, data.time)
-      
-    });
-    var messageForm = document.getElementById('message-form');
-    var messageDisplayDiv = document.getElementById('chat-messages')
-    var messageDiv = document.createElement('div');
-
-    var IsAI = {{'true' if user_to_chatwith.username in ['N.O.B', 'Dennis'] else 'false' }}
-
-    messageForm.addEventListener('submit', (event)=>{
-      if(!IsAI){
-
-      
-      event.preventDefault();
-    
-    messageContent = messageBox.value
-    if (messageContent){
-      socketio.emit('send-message', {data: messageContent})
-    };
-    messageBox.value = "";
-
+  // Helper to append a message (message must be safe/escaped by server)
+  const newMessage = (user_id, contact_id, username, contact_name, message, time) => {
+    if (!messageDisplayDiv) return;
+    const localDate = new Date(time);
+    const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false};
+    const formattedDateTime = localDate.toLocaleString(undefined, options);
+    const messageContent = `\n      <div class="chat-message user-message">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        ${message}\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
+    messageDisplayDiv.insertAdjacentHTML('beforeend', messageContent);
     messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
-  }
-    });
-    var typing = false;
-    var typingIndicator = document.getElementById('outer-message-display');
-    var timeout;
-    messageBox.addEventListener('input', () =>{
-       if(!typing){
-        typing = true;
-       socketio.emit('typing', {typer: userId})
-       }
+  };
 
-       clearTimeout(timeout);
-       timeout = setTimeout(()=>{
-         typing = false;
-         socketio.emit('stopped typing', {typer: userId});
+  // Incoming message from server
+  socketio.on('send-message', (data) => {
+    newMessage(data.user_id, data.contact_id, data.username, data.contact_name, data.message, data.time);
+  });
 
-       }, 2000)
-    });
-    socketio.on('typing', (data)=>{
-      if(data.typer!=userId){
-      typingIndicator.textContent = '...'
-      // messageDisplayDiv.appendChild(typingIndicator);
-    }
-  })
-
-    socketio.on('stopped typing', (data)=>{
-      if(data.typer!=userId){
-      typingIndicator.textContent = ''
-      // messageDisplayDiv.appendChild(typingIndicator);
+  // Submit handler: server-side POST for AI chats, socket for normal chats
+  if (messageForm && messageBox) {
+    messageForm.addEventListener('submit', (event) => {
+      if (IsAI) {
+        // Allow normal form POST so the server AI route handles and responds
+        return;
       }
-    })
-
-
-    document.addEventListener('DOMContentLoaded', function(){
-      messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
-      const timeElement = document.querySelectorAll('.message-time');
-
-      timeElement.forEach(element => {
-        const utcTimestring = element.textContent.trim();
-        const localDate = new Date(utcTimestring);
-
-        const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false}
-        element.textContent = localDate.toLocaleString(undefined, options);
-      })
-
+      event.preventDefault();
+      const messageContent = messageBox.value.trim();
+      if (!messageContent) return;
+      socketio.emit('send-message', {data: messageContent, to: contactId});
+      messageBox.value = '';
+      if (messageDisplayDiv) messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
     });
+  }
 
-</script> 
+  // Typing indicator
+  var typing = false; var timeout;
+  if (messageBox) {
+    messageBox.addEventListener('input', () => {
+      if (!typing) { typing = true; socketio.emit('typing', {typer: userId, to: contactId}); }
+      clearTimeout(timeout);
+      timeout = setTimeout(() => { typing = false; socketio.emit('stopped-typing', {typer: userId, to: contactId}); }, 2000);
+    });
+  }
+
+  socketio.on('typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.textContent = '...'; });
+  socketio.on('stopped-typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.textContent = ''; });
+
+  // Convert UTC message timestamps already printed to local times
+  document.addEventListener('DOMContentLoaded', function(){
+    if (messageDisplayDiv) messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
+    const timeElement = document.querySelectorAll('.chat-message-time');
+    timeElement.forEach(element => {
+      const utcTimestring = element.textContent.trim();
+      const localDate = new Date(utcTimestring);
+      const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false};
+      element.textContent = localDate.toLocaleString(undefined, options);
+    });
+  });
+</script>
+<!-- <script src="./static/scripts/scripts.js"></script> -->
 
 {% endblock %}
+
 

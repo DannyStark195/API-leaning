@@ -1,30 +1,37 @@
-{% extends 'base.html' %}
+{% extends 'home.html' %}
 
-{% block body %}
-<div class="">
-   <div class="">
-       <div class="search-container">
-            <form action="/search" method="GET" class="search-bar">
-            <input type="text" name="search" id="search" placeholder="Search NobHUB" >
-            <button type="submit"><ion-icon name="search-outline" class="search-outline"></ion-icon></button>
-        </form>
-        </div>
-       
-        <div class="contact-list">
-      
-          <div class="contacts">
-         {% if users %}
-          {% for user in users %}
-                  <img src="{{url_for('static', filename=user.user_image_path)}}" class="profile-pic" alt="profilePic">
-                  <a href=""><p>{{user.username}} </p></a>
-           <a href="/add/{{user.id}}"><button class="btn add-btn">➕ Add Contact</button></a>    
-        {% endfor %}  
+{%block left_side%}
+<div class="left-side full-screen light-theme">
         
+        <form action="/search" method="GET" class="search-form full-screen padding-block-1rem">
+                    <input type="text" name="search" id="search" class="search-bar middle-light-theme" placeholder="Search Nobhub" >
+        </form>  
+       
+        <div class="chat-main padding-inline">
+          {% if users %}
+            {% for user in users %}
+              <a href="/add/{{user.id}}" class="chat-link middle-light-theme">
+                <div class="contact">
+                  <img src="{{ url_for('static', filename=user.user_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
+                  <div class="">
+                    <p class="contact-name">{{user.username}}</p>
+                    <p class="contact-last-message">Hi there</p>
+                  </div>
+                </div>
+              </a>
+            
+            {% endfor %}  
+        </div>
+
+        {%else%}
+          <!-- <div class="no-message-div"> -->
+            <div class="no-message">
+                <h2 class="garamond-font"><i>'{{ users_to_find}}' Not found</i></h2>
+                
+            </div>
+          <!-- </div> -->
+      {% endif %}
       </div>
-      {%else%}
-        <p> '{{ users_to_find}}' not found</p>
-        {% endif %}
-    </div>
-  </div>
-  </div>
+{% endblock %}
+{% block right_side %}
 {% endblock %}

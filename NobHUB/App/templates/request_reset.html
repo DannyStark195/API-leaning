@@ -1,85 +1,36 @@
-{% extends 'form.html' %}
+{% extends 'base.html' %}
 {% block title%}NobHUB Login{% endblock %}
 {% block body %}
 
-<div class="content">
-    <div class="action-container">
-        <a href="/signup" class="btn back-btn">Back</a>
-    </div>
-    <h1 class="title">Reset Request</h1>
-
-  
-    <div class="form-container">
-        <div class="form-container">
+<main class="forms-main ">
+        
+    
+    <div class="forms light-theme">
+        <h1 class="title garamond-font"> 
+            <ion-icon name="pencil"></ion-icon>
+            <i>Reset request</i>
+        </h1> 
+    
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-        
-            <div class="form-container" style="color: rgb(89, 193, 201)">
+            <div class="error-message red-clr" >
                 {{messages[0] }}
-            
             </div>
             {% endif %}
         {% endwith %}
     
-        <form action="" method="POST" class="task-form">
-            <!-- <label for="username" class="form-label">Username</label>
-            <input type="text" name="username" id="password" placeholder="Username" class="task-input" required oninvalid="this.setCustomValidity('Username is required')" oninput="this.setCustomValidity('')">
-             -->
+        <form action="" method="POST" class="form">
             {{ reset_form.hidden_tag() }}
-                {{reset_form.email.label(for="email", class="form-label")}} 
-                    {{ reset_form.email(class="task-input", id="email", placeholder="Email", class="task-input", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
-               
+            {{reset_form.email.label(for="email", class="form-label")}} 
+                {{ reset_form.email(class="forms-input", id="email", placeholder="Email", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
             
-            
-            {{ reset_form.request(class="btn add-btn", id="login-btn")}}
-              
-            <!-- <label for="password0" class="form-label">PassWord</label>
-            <input type="password" name="password0" id="password" placeholder="PassWord" class="task-input" required oninvalid="this.setCustomValidity('PassWord is required')" oninput="this.setCustomValidity('')">
-             -->
-            
-            <!-- <button type="submit" class="btn add-btn"> GO </button> -->
+            {{ reset_form.request(class="button1 forms-button", id="login-btn")}}
             
         </form>
         
     </div>
     
 
-</div>
+</main>
 
-{% endblock %}
-{% block script %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggle = document.getElementById('togglePassword');
-    const password = document.getElementById('password0');
-    const password1 = document.getElementById('password1');
-    const eyeOpen = document.querySelector('.toggle-eye.open');
-    const eyeClose = document.querySelector('.toggle-eye.close');
-
-    function updateEye() {
-        if (password.type === 'password') {
-            eyeOpen.style.display = 'block';
-            eyeClose.style.display = 'none';
-        } else {
-            eyeOpen.style.display = 'none';
-            eyeClose.style.display = 'block';
-        }
-       
-    }
-
-    toggle.addEventListener('change', function() {
-        if (toggle.checked) {
-            password.type = 'password';
-            
-        } else {
-            password.type = 'text';
-            
-        }
-        updateEye();
-    });
-
-    // Initialize eye icons
-    updateEye();
-});
-</script>
 {% endblock %}
