@@ -66,13 +66,13 @@ element.addEventListener('click', function(){
 )
 
 
-document.querySelectorAll('.edit-message').forEach((element) =>{
-    element.addEventListener('click', function(){
-        document.querySelectorAll('.dark-overlay').forEach((element) => {
-            element.style.display= 'flex'
-        })
-    })
-})
+// document.querySelectorAll('.edit-message').forEach((element) =>{
+//     element.addEventListener('click', function(){
+//         document.querySelectorAll('.dark-overlay').forEach((element) => {
+//             element.style.display= 'flex'
+//         })
+//     })
+// })
 
 document.querySelectorAll('.theme').forEach((element) =>{
     element.addEventListener('click', function(){

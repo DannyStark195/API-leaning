@@ -288,18 +288,36 @@
 
 .dark-overlay{
   position: fixed;
-  inline-size: 100%;
-  block-size: 100%;
-  bottom: 0;
-  left: 0;
-  background-color: #00000099;
-  z-index: 3;
-  display: none;
-  /* display: flex; */
-  justify-content: center;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
   align-items: center;
-
+  justify-content: center;
+  z-index: 999;
 }
+.edit-overlay{
+  background: var(--soft-white, #fff);
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 560px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+}
+.edit-overlay textarea{
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.edit-actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  justify-content:flex-end;
+}
+.btn{ background:#25d366; color:#fff; padding:8px 14px; border-radius:20px; border:none; }
+.btn-secondary{ background:#ddd; color:#333; padding:8px 14px; border-radius:20px; text-decoration:none; display:inline-block; }
+
 .menu{
   /* display: none; */
   position: absolute;
@@ -308,10 +326,7 @@
   border-radius: 10px;
   box-shadow: 0 1px 3px var(--Mist-Gray-Blue);
   padding: 0;
-  /* color: #000; */
-  /* background-color: #fff; */
-  z-index: 1;
-  
+  z-index: 2;
   transform: scaleY(0);
   transform-origin: top;
   transition: 0.2s transform ease-in-out;
@@ -336,12 +351,20 @@
   align-items: center;
   padding-block: 0.5rem;
 }
-/* .menu a, .menu a:visited{
-  text-decoration: none;
-  color: #000;
-} */
+
 .menu-options:hover{
   background: #f5f5f5;
+}
+.chat-message .menu-btn{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #646262;
+}
+
+
+.chat-message .position-slightly-lower {
+  top: 25px;
 }
 
 .chat-main{
@@ -488,6 +511,7 @@
   flex-direction: column;
   padding-inline: 1rem;
 }
+
 .chat-message {
   position: relative;
   max-width: 80%;
@@ -501,7 +525,14 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.20);
 
 }
-
+.chat-link-btn{
+  box-shadow: 0 0 0;
+  background: none;
+  border: none;
+  padding: 0;
+  /* color: currentColor; */
+  font-size: inherit;
+}
 .user-message {
   background: var(--soft-silver-white);
   align-self: flex-end;
@@ -710,4 +741,3 @@
             gap: 1rem;
           }
     }
- 

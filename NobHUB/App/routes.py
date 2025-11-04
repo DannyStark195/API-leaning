@@ -65,23 +65,44 @@ def chat(id):
      or_(
          and_(Messages.user_id == current_user.id, Messages.contact_id == user_to_chatwith.id),
          and_(Messages.user_id == user_to_chatwith.id, Messages.contact_id == current_user.id)
-     )).order_by(Messages.time).all()                                                                       #Get user and contacts messages
-    print(messages)
-    decrypt_user_message = decrypt_message
-    message_test = Messages.query.filter_by(user_id = current_user.id).first()
-    if message_test:
-        print(message_test.message)
+     )).order_by(Messages.time).all()
 
+    decrypt_user_message = decrypt_message
+
+    # room setup (existing)
     chat_space = current_user.username+' | '+user_to_chatwith.username
     if user_to_chatwith.username+' | '+current_user.username in chat_spaces:
         chat_space = user_to_chatwith.username+' | '+current_user.username
     chat_spaces[chat_space] = {"users": 0, "username": []}
-    
+
     session['chat_space'] = chat_space
     session['contact_id'] = user_to_chatwith.id
     session['contact_name'] = user_to_chatwith.username
-    
-    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith, decrypt_user_message=decrypt_user_message, AIs=AIs)
+
+    # read overlay flags from session (set by get_edit_message) and pop them so they don't persist
+    dark_overlay = session.pop('dark_overlay', False)
+    edit_overlay = session.pop('edit_overlay', False)
+    edit_message_text = session.pop('edit_message_text', None)
+    edit_message_id = session.pop('edit_message_id', None)
+
+    delete_overlay = session.pop('delete_overlay', False)
+    delete_message_id = session.pop('delete_message_id', None)
+
+    return render_template('chat.html',
+                           contacts=contacts,
+                           user=current_user,
+                           messages=messages,
+                           contact=user_contacts_entry,
+                           user_to_chatwith=user_to_chatwith,
+                           decrypt_user_message=decrypt_user_message,
+                           AIs=AIs,
+                           dark_overlay=dark_overlay,
+                           edit_overlay=edit_overlay,
+                           edit_message_text=edit_message_text,
+                           edit_message_id=edit_message_id,
+                           delete_overlay=delete_overlay,
+                           delete_message_id=delete_message_id)
+
 
 @routes.route('/chat/AI/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -133,7 +154,30 @@ def chat_AI(id):
             print(e)
             return flash("Error 201: Failed to send message")
          
-    return render_template('chat.html', contacts=contacts, user=current_user, messages=messages,contact=user_contacts_entry, user_to_chatwith=user_to_chatwith, decrypt_user_message=decrypt_user_message, AIs=AIs)
+    # after commit / before render - same overlay pop logic as chat()
+    dark_overlay = session.pop('dark_overlay', False)
+    edit_overlay = session.pop('edit_overlay', False)
+    edit_message_text = session.pop('edit_message_text', None)
+    edit_message_id = session.pop('edit_message_id', None)
+
+    delete_overlay = session.pop('delete_overlay', False)
+    delete_message_id = session.pop('delete_message_id', None)
+
+    return render_template('chat.html',
+                           contacts=contacts,
+                           user=current_user,
+                           messages=messages,
+                           contact=user_contacts_entry,
+                           user_to_chatwith=user_to_chatwith,
+                           decrypt_user_message=decrypt_user_message,
+                           AIs=AIs,
+                           dark_overlay=dark_overlay,
+                           edit_overlay=edit_overlay,
+                           edit_message_text=edit_message_text,
+                           edit_message_id=edit_message_id,
+                           delete_overlay=delete_overlay,
+                           delete_message_id=delete_message_id)
+
 
 @routes.route('/search', methods=['GET'])
 def search():
@@ -223,26 +267,115 @@ def edit_profile():
     
     return render_template('edit_profile.html', user=current_user, edit_form=edit_form)
 
-@routes.route('/edit_message/<int:id>', methods=['GET', 'POST'])
+@routes.route('/get/edit_message/<int:id>', methods=['GET'])
+@login_required
+def get_edit_message(id):
+    # Find message, decrypt it, determine contact entry id, set session flags and redirect back to chat
+    message_object = Messages.query.get_or_404(id)
+    # decrypt message text for prefill
+    try:
+        message_to_edit = decrypt_message(message_object.message)
+    except Exception:
+        message_to_edit = ''  # fallback
+
+    # determine the other user in this conversation
+    if message_object.user_id == current_user.id:
+        other_user_id = message_object.contact_id
+    else:
+        other_user_id = message_object.user_id
+
+    # find the Contacts entry id for current_user <-> other_user
+    contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=other_user_id).first()
+    if not contact_entry:
+        # fallback: redirect to home if contact entry missing
+        flash('Contact not found for editing.')
+        return redirect(url_for('routes.home'))
+
+    # set session flags so chat route will render overlay
+    session['dark_overlay'] = True
+    session['edit_overlay'] = True
+    session['edit_message_text'] = message_to_edit
+    session['edit_message_id'] = id
+
+    return redirect(url_for('routes.chat', id=contact_entry.id))
+
+
+@routes.route('/edit_message/<int:id>', methods=['POST'])
+@login_required
 def edit_message(id):
-    message_to_edit = Messages.query.get_or_404(id)                                                                      #Get user and contacts messages
-    print(message_to_edit.id)
-    print(message_to_edit.message)
-    return f"{message_to_edit.id}"
-@routes.route('/delete_message/<int:id>', methods=['GET', 'POST'])
+    # Update the message with the edited text and redirect back to the chat page
+    message_to_edit = Messages.query.get_or_404(id)
+    edited_message = request.form.get('edited_message') or request.form.get('user_message')
+    contact_entry_id = request.form.get('contact_id')
+
+    if not contact_entry_id:
+        # attempt to derive contact entry id from the message object
+        other_user = message_to_edit.contact_id if message_to_edit.user_id == current_user.id else message_to_edit.user_id
+        contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=other_user).first()
+        contact_entry_id = contact_entry.id if contact_entry else None
+
+    if edited_message:
+        try:
+            new_encrypted = encrypt_message(edited_message)
+            message_to_edit.message = new_encrypted
+            nob_db.session.commit()
+        except Exception as e:
+            nob_db.session.rollback()
+            flash('Could not save edited message.')
+    # redirect back to the chat view (contacts id)
+    if contact_entry_id:
+        return redirect(url_for('routes.chat', id=int(contact_entry_id)))
+    return redirect('/home')
+
+
+@routes.route('/delete_message/<int:id>', methods=['POST'])
+@login_required
 def delete_message(id):
-     message_to_delete = Messages.query.get_or_404(id)
-     try:
-        # Delete the task from the database and commit the changes
+    # Delete and redirect back to the chat for the supplied contact_id
+    contact_entry_id = request.form.get('contact_id')
+    message_to_delete = Messages.query.get_or_404(id)
+    try:
         nob_db.session.delete(message_to_delete)
         nob_db.session.commit()
-        return redirect('/home')
-     except:
-        # Handle any errors that occur during the deletion process
-        flash('Could not delete message. Try again')
-        return redirect('/home')
+    except Exception:
+        nob_db.session.rollback()
+        flash('Could not delete message.')
+
+    if contact_entry_id:
+        return redirect(url_for('routes.chat', id=int(contact_entry_id)))
+    # fallback: try to derive contact_entry from message
+    other_user = message_to_delete.contact_id if message_to_delete.user_id == current_user.id else message_to_delete.user_id
+    contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=other_user).first()
+    if contact_entry:
+        return redirect(url_for('routes.chat', id=contact_entry.id))
+    return redirect('/home')
 
 @routes.route('/settings', methods=['GET'])
 @login_required
 def settings():
     return render_template('settings.html')
+
+@routes.route('/get/delete_message/<int:id>', methods=['GET'])
+@login_required
+def get_delete_message(id):
+    # find message
+    message = Messages.query.get_or_404(id)
+
+    # determine other user in conversation
+    if message.user_id == current_user.id:
+        other_user_id = message.contact_id
+    else:
+        other_user_id = message.user_id
+
+    # find the contact entry id (Contacts table holds chat list entries)
+    contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=other_user_id).first()
+    if not contact_entry:
+        flash('Contact not found for deletion.')
+        return redirect(url_for('routes.home'))
+
+    # set session flags so chat() will render delete confirmation overlay
+    session['dark_overlay'] = True
+    session['delete_overlay'] = True
+    session['delete_message_id'] = id
+
+    return redirect(url_for('routes.chat', id=contact_entry.id))
