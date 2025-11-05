@@ -116,17 +116,17 @@
       gap: 1rem;
       align-items:center;
     }
-    .svgs ion-icon{
-      width: 20px;
-      height: 20px;
-      padding: 8px;
-      border-radius: 50%;
+    .svgs img{
+      /* width: 40px; */
+      /* height: 40px; */
+      /* padding: 8px; */
+      /* border-radius: 20%; */
       background: transparent;
       transition: transform 120ms ease, box-shadow 120ms;
     }
-    .svgs ion-icon:hover{
+    .svgs img:hover{
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.20);
+      /* box-shadow: 0 8px 20px rgba(0,0,0,0.20); */
     }
     
 
@@ -486,8 +486,9 @@
   top: 0;
   z-index: 2;
 }
-.right-side p{
-  /* margin-inline-end: 20rem; */
+.chat-message p{
+  padding-inline-end: 8px;
+  padding-block: 0;
 }
 .menu-btn{
   box-shadow: 0 0 0;
@@ -733,6 +734,9 @@
           }
           .margin-inline-start{
             margin-inline-start: 0.5rem;
+          }
+          .chat-message p{
+            font-size: 1rem;
           }
           footer{
             flex-direction: column;

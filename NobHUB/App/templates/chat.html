@@ -106,7 +106,7 @@
         <div class="menu-options">
           <form action="{{ url_for('routes.get_edit_message', id=message.id) }}" method="get" style="display:inline;">
             <input type="hidden" name="contact_id" value="{{ contact.id }}">
-            <button type="submit" class="chat-link-btn">Edit</button>
+            <button type="submit" class="chat-link-btn light-theme">Edit</button>
           </form>
         </div>
 
@@ -117,7 +117,7 @@
           </form>
         </div>
       </div>
-       {{ decrypt_user_message(message.message) }} 
+      <p> {{ decrypt_user_message(message.message) }} </p>
       <time class="chat-message-time">{{ message.time.isoformat()+'Z' }}</time>
     </div>
     {% endif %} {%if message.user_id == user_to_chatwith.id %}
@@ -131,7 +131,7 @@
           </form>
         </div>
       </div>
-       {{ decrypt_user_message(message.message) | safe }} 
+       <p>{{ decrypt_user_message(message.message) | safe }} </p>
       <time class="chat-message-time">{{ message.time.isoformat()+'Z' }}</time>
     </div>
     {% endif %} {% endfor %} {% else %}
@@ -225,7 +225,7 @@
     const localDate = new Date(time);
     const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false};
     const formattedDateTime = localDate.toLocaleString(undefined, options);
-    const messageContent = `\n      <div class="chat-message user-message">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        ${message}\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
+    const messageContent = `\n      <div class="chat-message user-message">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        <p>${message}</p>\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
     messageDisplayDiv.insertAdjacentHTML('beforeend', messageContent);
     messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
   };

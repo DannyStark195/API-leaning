@@ -76,6 +76,13 @@ element.addEventListener('click', function(){
 
 document.querySelectorAll('.theme').forEach((element) =>{
     element.addEventListener('click', function(){
+        let currentName = this.getAttribute('name');
+        console.log(currentName)
+        radioOn = 'radio-button-on-outline';
+        let newName = currentName === radioOn? previousName:radioOn;
+        previousName = currentName;
+        this.setAttribute('name', newName);
+
         console.log('theme');
         theme = localStorage.getItem('theme');
         console.log(theme);
