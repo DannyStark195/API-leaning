@@ -154,7 +154,7 @@ def authorize_google():
         user_or_email = User.query.filter_by(user_email=user_email).first()
         user_image_path= os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg')
         if not user_or_email:
-            new_user = User(username=username, user_email=user_email, user_number=f'{secrets.token_hex(16)}',user_password_hash=f'{secrets.token_hex(16)}',user_image_path=user_image_path)
+            new_user = User(username=username, user_email=user_email, user_number=f'{secrets.token_hex(16)}',user_password_hash=f'{secrets.token_hex(16)}',user_image_path=user_image_path, user_about="Hi I'm using Nobhub!")
                 
             nob_db.session.add(new_user)
                     
@@ -164,7 +164,8 @@ def authorize_google():
     except Exception as e:
                 nob_db.session.rollback()
                 print(e)
-                return "Error 101: Failed to add user. Please try again!"    
+                flash('Sorry Failed to signup with google. Please try again')
+                return redirect(url_for('auth.signup'))
     session['oauth_token'] = token
     login_user(user_or_email)
     return redirect(url_for('routes.home'))

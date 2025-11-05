@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title%}NobHUB Login{% endblock %}
+{% block title%}NobHUB Request Reset{% endblock %}
 {% block body %}
 
 <main class="forms-main ">
@@ -21,7 +21,7 @@
     
         <form action="" method="POST" class="form">
             {{ reset_form.hidden_tag() }}
-            {{reset_form.email.label(for="email", class="form-label")}} 
+            {{reset_form.email.label(for="email", class="")}} 
                 {{ reset_form.email(class="forms-input", id="email", placeholder="Email", oninvalid="this.setCustomValidity('Username is required')", oninput="this.setCustomValidity('')")}}
             
             {{ reset_form.request(class="button1 forms-button", id="login-btn")}}
