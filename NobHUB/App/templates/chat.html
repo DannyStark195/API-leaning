@@ -106,7 +106,7 @@
         <div class="menu-options">
           <form action="{{ url_for('routes.get_edit_message', id=message.id) }}" method="get" style="display:inline;">
             <input type="hidden" name="contact_id" value="{{ contact.id }}">
-            <button type="submit" class="chat-link-btn">Edit</button>
+            <button type="submit" class="chat-link-btn light-theme">Edit</button>
           </form>
         </div>
 
@@ -143,7 +143,11 @@
     <!-- </div> -->
 
     {% endif %}
-    <div id="typing-message-display"></div>
+    <div id="typing-message-display" class="typing-message-display">
+      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+    </div>
   </div>
 
   <form
@@ -212,20 +216,34 @@
   var userName = {{ user.username | tojson }};
   var contactId = {{ user_to_chatwith.id | tojson }};
   var IsAI = {{ (user_to_chatwith.username in AIs) | tojson }};
-
+  // let theme = localStorage.getItem('theme')
   // Cache DOM nodes
   var messageDisplayDiv = document.getElementById('chat-messages');
   var messageBox = document.getElementById('message-box');
   var messageForm = document.getElementById('message-form');
   var typingIndicator = document.getElementById('typing-message-display');
-
+  var messageContent;
   // Helper to append a message (message must be safe/escaped by server)
   const newMessage = (user_id, contact_id, username, contact_name, message, time) => {
     if (!messageDisplayDiv) return;
     const localDate = new Date(time);
     const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false};
     const formattedDateTime = localDate.toLocaleString(undefined, options);
-    const messageContent = `\n      <div class="chat-message user-message">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        <p>${message}</p>\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
+    
+    messageContent = `\n      <div class="chat-message contact-message light-theme">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        <p>${message}</p>\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
+    if(theme=='dark'){
+    messageContent = `\n      <div class="chat-message contact-message light-theme" style="color:#fff; background-color:#000000fd;">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        <p>${message}</p>\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
+    
+  }
+    
+    if(user_id === userId){
+        messageContent = `\n      <div class="chat-message user-message">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        <p>${message}</p>\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
+        if(theme==='dark'){
+        messageContent = `\n      <div class="chat-message user-message" style="color: #000; background-color:#d6d6ddff;">\n        <ion-icon name="ellipsis-vertical" class="menu-btn position-left"></ion-icon>\n        <div class="menu position-slightly-lower light-theme">\n          <div class="menu-options">\n            <p href="" class="edit-message"></p>\n          </div>\n          <div class="menu-options red-clr"></div>\n        </div>\n        <p>${message}</p>\n        <time class="chat-message-time"> ${formattedDateTime}</time>\n      </div>\n    `;
+        console.log(theme)
+        }
+    }
+
     messageDisplayDiv.insertAdjacentHTML('beforeend', messageContent);
     messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
   };
@@ -245,7 +263,7 @@
       event.preventDefault();
       const messageContent = messageBox.value.trim();
       if (!messageContent) return;
-      socketio.emit('send-message', {data: messageContent, to: contactId});
+      socketio.emit('send-message', {data: messageContent});
       messageBox.value = '';
       if (messageDisplayDiv) messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
     });
@@ -255,14 +273,14 @@
   var typing = false; var timeout;
   if (messageBox) {
     messageBox.addEventListener('input', () => {
-      if (!typing) { typing = true; socketio.emit('typing', {typer: userId, to: contactId}); }
+      if (!typing) { typing = true; socketio.emit('typing', {typer: userId}); }
       clearTimeout(timeout);
-      timeout = setTimeout(() => { typing = false; socketio.emit('stopped-typing', {typer: userId, to: contactId}); }, 2000);
+      timeout = setTimeout(() => { typing = false; socketio.emit('stopped-typing', {typer: userId}); }, 200);
     });
   }
 
-  socketio.on('typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.textContent = '...'; });
-  socketio.on('stopped-typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.textContent = ''; });
+  socketio.on('typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.style.display = 'flex'; });
+  socketio.on('stopped-typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.style.display = 'none'; });
 
   // Convert UTC message timestamps already printed to local times
   document.addEventListener('DOMContentLoaded', function(){
