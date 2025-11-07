@@ -14,6 +14,26 @@ routes = Blueprint('routes',__name__)
 @routes.route('/')
 def index():
     return render_template('index.html')
+def get_last_message(user_a_id: int, user_b_id: int) -> Messages | None:
+    """
+    Finds the latest message between two users (A->B or B->A).
+    """
+    # Use OR to cover both directions of the conversation
+    conversation_filter = or_(
+        # A sent to B
+        nob_db.and_(Messages.user_id == user_a_id, Messages.contact_id == user_b_id),
+        # B sent to A
+        nob_db.and_(Messages.user_id == user_b_id, Messages.contact_id == user_a_id)
+    )
+
+    last_message = nob_db.session.execute(
+        nob_db.select(Messages)
+        .where(conversation_filter)
+        .order_by(Messages.time.desc()) # Sort from newest to oldest
+        .limit(1)                             # Take only the newest one
+    ).scalar_one_or_none()
+
+    return last_message
 @routes.route('/home', methods=["GET", "POST"])
 @login_required
 def home():
@@ -48,7 +68,22 @@ def home():
             print(e)
             return "Error: 101"
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()  
-    return render_template('home.html', contacts=contacts, user=current_user)
+    contacts_data = []
+    no_messages = encrypt_message('No messages yet.')
+    for contact in contacts:
+        # This calls the complex SQL query for *each* contact.
+        last_msg = get_last_message(current_user.id, contact.id) 
+        
+        contacts_data.append({
+            'id': contact.id,
+            'contact_name': contact.contact_name,
+            'contact_image_path': contact.contact_image_path,
+            # This is the key: attach the result of the backend query
+            'last_message_text': last_msg.message if last_msg else no_messages, 
+            # ... other data
+        })
+        decrypt_user_message = decrypt_message
+    return render_template('home.html', contacts=contacts_data, user=current_user, decrypt_user_message=decrypt_user_message)
     
 @routes.route('/users')
 def users():
@@ -68,6 +103,7 @@ def chat(id):
      )).order_by(Messages.time).all()
 
     decrypt_user_message = decrypt_message
+    
 
     # room setup (existing)
     chat_space = current_user.username+' | '+user_to_chatwith.username
@@ -101,7 +137,8 @@ def chat(id):
                            edit_message_text=edit_message_text,
                            edit_message_id=edit_message_id,
                            delete_overlay=delete_overlay,
-                           delete_message_id=delete_message_id)
+                           delete_message_id=delete_message_id,
+                           chat_space=chat_space)
 
 
 @routes.route('/chat/AI/<int:id>', methods=['GET', 'POST'])

@@ -88,14 +88,17 @@ def handle_send_message(data):
 def handle_typing(data):
     if not current_user.is_authenticated:
         return
-    chat_space = session.get('chat_space')
-    emit('typing', {'typer': current_user.id}, to=chat_space)
+    typer = data.get('typer')
+    chat_space = data.get('chat_space')
+    if chat_space:
+        emit('typing', {'typer': typer, 'chat_space':chat_space}, room=chat_space, include_self=False)
 @socketio.on('stopped typing')
 def handle_stopped_typing(data):
     if not current_user.is_authenticated:
         return
-    chat_space = session.get('chat_space')
-    emit('stopped typing', {'typer': current_user.id}, to=chat_space)
-    
+    typer = data.get('typer')
+    chat_space = data.get('chat_space')
+    if chat_space:
+        emit('typing', {'typer': typer, 'chat_space':chat_space}, room=chat_space, include_self=False)
     
     

@@ -216,6 +216,7 @@
   var userName = {{ user.username | tojson }};
   var contactId = {{ user_to_chatwith.id | tojson }};
   var IsAI = {{ (user_to_chatwith.username in AIs) | tojson }};
+
   // let theme = localStorage.getItem('theme')
   // Cache DOM nodes
   var messageDisplayDiv = document.getElementById('chat-messages');
@@ -271,17 +272,37 @@
 
   // Typing indicator
   var typing = false; var timeout;
+  var typingUsers = new Set();
   if (messageBox) {
     messageBox.addEventListener('input', () => {
-      if (!typing) { typing = true; socketio.emit('typing', {typer: userId}); }
+      if (!typing) { typing = true; socketio.emit('typing', {typer: userId, chat_space: chatSpace}); }
       clearTimeout(timeout);
-      timeout = setTimeout(() => { typing = false; socketio.emit('stopped-typing', {typer: userId}); }, 200);
+      timeout = setTimeout(() => { typing = false; socketio.emit('stopped-typing', {typer: userId, chat_space: chatSpace}); }, 1000);
     });
   }
+  function updateTypingIndicator(){
+    if (!typingIndicator) return;
+    if (typingUsers.size > 0) typingIndicator.style.display = 'flex';
+    else typingIndicator.style.display = 'none';
+  }
 
-  socketio.on('typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.style.display = 'flex'; });
-  socketio.on('stopped-typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.style.display = 'none'; });
+  // socketio.on('typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.style.display = 'flex'; });
+  // socketio.on('stopped-typing', (data) => { if (data.typer != userId && typingIndicator) typingIndicator.style.display = 'none'; });
+socketio.on('typing', (data) => {
+  if (!data) return;
+  if (data.chat_space !== chatSpace) return;
+  if (data.typer === userId) return;
+  typingUsers.add(data.typer);
+    updateTypingIndicator();
+});
 
+socketio.on('stopped-typing', (data) => {
+  if (!data) return;
+  if (data.chat_space !== chatSpace) return;
+  if (data.typer === userId) return;
+  typingUsers.delete(data.typer);
+    updateTypingIndicator();
+});
   // Convert UTC message timestamps already printed to local times
   document.addEventListener('DOMContentLoaded', function(){
     if (messageDisplayDiv) messageDisplayDiv.scrollTop = messageDisplayDiv.scrollHeight;
