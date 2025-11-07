@@ -15,14 +15,14 @@ routes = Blueprint('routes',__name__)
 def index():
     return render_template('index.html')
     
-def get_last_message(contacts) -> Messages | None:
+def contact_data(contacts):
     """
     Finds the latest message between two users (A->B or B->A).
     """
     no_messages = encrypt_message('No messages yet.')
     contacts_data = []
     for contact in contacts:
-        # This calls the complex SQL query for *each* contact.
+        # This calls the SQL query for *each* contact.
         user_contacts_entry = Contacts.query.filter_by(id=contact.id, user_id=current_user.id).first_or_404()  # get a table consisting of the contacts associated with a user from the Contacts table
         user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id)
         last_message = Messages.query.filter(
@@ -43,14 +43,13 @@ def get_last_message(contacts) -> Messages | None:
         # ).scalar_one_or_none()
         print(last_message)
         
-        # last_msg = get_last_message(current_user.id, user_to_chatwith.id) 
+        # last_msg = contact_data(current_user.id, user_to_chatwith.id) 
             
         contacts_data.append({
                 'id': contact.id,
                 'contact_name': contact.contact_name,
                 'contact_image_path': contact.contact_image_path,
-                # This is the key: attach the result of the backend query
-                'last_message_text': last_message.message if last_message else no_messages, 
+                'last_message': last_message.message if last_message else no_messages, 
                 
             })
         
@@ -91,7 +90,7 @@ def home():
             print(e)
             return "Error: 101"
     
-    contacts = get_last_message(contacts=contacts)
+    contacts = contact_data(contacts=contacts)
     decrypt_user_message = decrypt_message
     return render_template('home.html', contacts=contacts, user=current_user, decrypt_user_message=decrypt_user_message)
     
@@ -135,7 +134,7 @@ def chat(id):
     delete_overlay = session.pop('delete_overlay', False)
     delete_message_id = session.pop('delete_message_id', None)
 
-    contacts = get_last_message(contacts=contacts)
+    contacts = contact_data(contacts=contacts)
     return render_template('chat.html',
                            contacts=contacts,
                            user=current_user,
@@ -213,8 +212,8 @@ def chat_AI(id):
 
     delete_overlay = session.pop('delete_overlay', False)
     delete_message_id = session.pop('delete_message_id', None)
-    
-    contacts = get_last_message(contacts=contacts)
+
+    contacts = contact_data(contacts=contacts)
     return render_template('chat.html',
                            contacts=contacts,
                            user=current_user,
@@ -431,3 +430,7 @@ def get_delete_message(id):
     session['delete_message_id'] = id
 
     return redirect(url_for('routes.chat', id=contact_entry.id))
+# @routes.errorhandler(404)
+# def page_not_found(e):
+#     print("404")
+#     return render_template('404.html'), 404

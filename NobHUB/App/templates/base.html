@@ -20,7 +20,9 @@
  {%block body %} {% endblock %} 
  <!-- SocketIO JS -->
 
-{%block script%} {% endblock %}
+{%block script%} 
+<script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
+{% endblock %}
 
 </body>
 
