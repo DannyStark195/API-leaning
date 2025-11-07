@@ -32,7 +32,7 @@ def get_last_message(user_a_id: int, user_b_id: int) -> Messages | None:
         .order_by(Messages.time.desc()) # Sort from newest to oldest
         .limit(1)                             # Take only the newest one
     ).scalar_one_or_none()
-
+    print(last_message)
     return last_message
 @routes.route('/home', methods=["GET", "POST"])
 @login_required
@@ -72,7 +72,9 @@ def home():
     no_messages = encrypt_message('No messages yet.')
     for contact in contacts:
         # This calls the complex SQL query for *each* contact.
-        last_msg = get_last_message(current_user.id, contact.id) 
+        user_contacts_entry = Contacts.query.filter_by(id=contact.id, user_id=current_user.id).first_or_404()  # get a table consisting of the contacts associated with a user from the Contacts table
+        user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id) 
+        last_msg = get_last_message(current_user.id, user_to_chatwith.id) 
         
         contacts_data.append({
             'id': contact.id,
@@ -94,6 +96,22 @@ def users():
 @login_required
 def chat(id):
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()
+    contacts_data = []
+    no_messages = encrypt_message('No messages yet.')
+    for contact in contacts:
+        # This calls the complex SQL query for *each* contact.
+        user_contacts_entry = Contacts.query.filter_by(id=contact.id, user_id=current_user.id).first_or_404()  # get a table consisting of the contacts associated with a user from the Contacts table
+        user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id) 
+        last_msg = get_last_message(current_user.id, user_to_chatwith.id) 
+        
+        contacts_data.append({
+            'id': contact.id,
+            'contact_name': contact.contact_name,
+            'contact_image_path': contact.contact_image_path,
+            # This is the key: attach the result of the backend query
+            'last_message_text': last_msg.message if last_msg else no_messages, 
+            # ... other data
+        })
     user_contacts_entry = Contacts.query.filter_by(id=id, user_id=current_user.id).first_or_404()  # get a table consisting of the contacts associated with a user from the Contacts table
     user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id)                     #  get the contact/user to chat with from the users table
     messages = Messages.query.filter(
@@ -125,7 +143,7 @@ def chat(id):
     delete_message_id = session.pop('delete_message_id', None)
 
     return render_template('chat.html',
-                           contacts=contacts,
+                           contacts=contacts_data,
                            user=current_user,
                            messages=messages,
                            contact=user_contacts_entry,
@@ -145,6 +163,22 @@ def chat(id):
 @login_required
 def chat_AI(id):
     contacts = Contacts.query.filter_by(user_id=current_user.id).all()
+    contacts_data = []
+    no_messages = encrypt_message('No messages yet.')
+    for contact in contacts:
+        # This calls the complex SQL query for *each* contact.
+        user_contacts_entry = Contacts.query.filter_by(id=contact.id, user_id=current_user.id).first_or_404()  # get a table consisting of the contacts associated with a user from the Contacts table
+        user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id) 
+        last_msg = get_last_message(current_user.id, user_to_chatwith.id) 
+        
+        contacts_data.append({
+            'id': contact.id,
+            'contact_name': contact.contact_name,
+            'contact_image_path': contact.contact_image_path,
+            # This is the key: attach the result of the backend query
+            'last_message_text': last_msg.message if last_msg else no_messages, 
+            # ... other data
+        })
     user_contacts_entry = Contacts.query.filter_by(id=id, user_id=current_user.id).first_or_404()  # get a table consisting of the contacts associated with a user from the Contacts table
     user_to_chatwith = User.query.get_or_404(user_contacts_entry.contact_id)                     #  get the contact/user to chat with from the users table
     messages = Messages.query.filter(
@@ -201,7 +235,7 @@ def chat_AI(id):
     delete_message_id = session.pop('delete_message_id', None)
 
     return render_template('chat.html',
-                           contacts=contacts,
+                           contacts=contacts_data,
                            user=current_user,
                            messages=messages,
                            contact=user_contacts_entry,
