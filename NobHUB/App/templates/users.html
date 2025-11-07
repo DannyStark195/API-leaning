@@ -15,7 +15,7 @@
                   <img src="{{ url_for('static', filename=user.user_image_path) }}" class="contact-proile-pic", alt="Contact Profile Picture">
                   <div class="">
                     <p class="contact-name">{{user.username}}</p>
-                    <p class="contact-last-message">Hi there</p>
+                    <p class="contact-last-message">{{user.user_about}}</p>
                   </div>
                 </div>
               </a>
