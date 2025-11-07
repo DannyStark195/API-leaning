@@ -2,11 +2,12 @@ from google import genai
 from google.genai import types
 from flask import current_app #gives access to the current app running and all its resources
 import re
-def format_text(text):
+def format_text(text): #function to format ai messages
     text = re.sub(r'\*(.*?)\*', r'<b>\1</b>', text)
     text = text.replace('*', '')
     formatted_text = text
     return formatted_text
+
 def NOB(message):
     client = genai.Client(api_key=current_app.config["API_KEY"])
     response = client.models.generate_content(

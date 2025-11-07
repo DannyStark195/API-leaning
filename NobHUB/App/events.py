@@ -7,8 +7,9 @@ from .models import User, Messages, nob_db
 
 from werkzeug.security import generate_password_hash, check_password_hash
 socketio = SocketIO()
-active_users ={} 
+# active_users ={} 
 chat_spaces = {}
+
 @socketio.on("connect")
 def handle_connect(data, auth=None):
     if current_user.is_authenticated:
@@ -25,6 +26,7 @@ def handle_connect(data, auth=None):
         print(f"{username} has joined chat space {chat_space}")
         print("User connected")
     return
+
 @socketio.on('disconnect')
 def handle_disconnect(sid=None):
     if current_user.is_authenticated:
@@ -38,8 +40,7 @@ def handle_disconnect(sid=None):
                 chat_spaces.pop(chat_space)
         send({'username': username, 'message': "is offline"}, to=chat_space)
         print(f"{username} has left chat space {chat_space}")
-    # if request.sid in active_users:
-    #     active_users.pop(request.sid)
+   
 
 @socketio.on('send-message')
 def handle_send_message(data):
@@ -79,11 +80,11 @@ def handle_send_message(data):
         emit('send-message', message_data, to=chat_space)
         
         print(f"{username}: Message: {user_message}")
-        #emit('new-message', message_data, chats=)
     except Exception as e:
         nob_db.session.rollback()
         print(e)
         return 
+    
 @socketio.on('typing')
 def handle_typing(data):
     if not current_user.is_authenticated:
@@ -92,6 +93,7 @@ def handle_typing(data):
     chat_space = data.get('chat_space')
     if chat_space:
         emit('typing', {'typer': typer, 'chat_space':chat_space}, room=chat_space, include_self=False)
+
 @socketio.on('stopped typing')
 def handle_stopped_typing(data):
     if not current_user.is_authenticated:

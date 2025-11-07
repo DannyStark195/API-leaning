@@ -1,7 +1,7 @@
 from flask import current_app
 from cryptography.fernet import Fernet
 
-
+#The security.py defines the logic for encrypting and decrypting chat messages
 
 def encrypt_message(message):
     key =  current_app.config['ENCRYPTION_KEY']

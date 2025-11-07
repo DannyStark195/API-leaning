@@ -331,12 +331,12 @@ def get_edit_message(id):
 
     # determine the other user in this conversation
     if message_object.user_id == current_user.id:
-        other_user_id = message_object.contact_id
+        contact_id = message_object.contact_id
     else:
-        other_user_id = message_object.user_id
+        contact_id = message_object.user_id
 
     # find the Contacts entry id for current_user <-> other_user
-    contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=other_user_id).first()
+    contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=contact_id).first()
     if not contact_entry:
         # fallback: redirect to home if contact entry missing
         flash('Contact not found for editing.')
@@ -412,14 +412,14 @@ def get_delete_message(id):
     # find message
     message = Messages.query.get_or_404(id)
 
-    # determine other user in conversation
+    # determine other user 
     if message.user_id == current_user.id:
-        other_user_id = message.contact_id
+        contact_id = message.contact_id
     else:
-        other_user_id = message.user_id
+        contact_id = message.user_id
 
     # find the contact entry id (Contacts table holds chat list entries)
-    contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=other_user_id).first()
+    contact_entry = Contacts.query.filter_by(user_id=current_user.id, contact_id=contact_id).first()
     if not contact_entry:
         flash('Contact not found for deletion.')
         return redirect(url_for('routes.home'))

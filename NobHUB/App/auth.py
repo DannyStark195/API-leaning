@@ -42,7 +42,7 @@ def signup():
     if signup_form.validate_on_submit():
 
             user_password = signup_form.password0.data
-            #Added and used lask wtf for form validation
+            #Added and used flask wtf for form validation
             username= signup_form.username.data
             user_email= signup_form.email.data
             user_number= signup_form.phoneNumber.data
@@ -92,11 +92,10 @@ def signup():
 
 @auth.route('/login', methods=['GET','POST'])
 def login():
-    # username = request.form.get('username')
-    # user_password = request.form.get('password0')
+   
     login_form = LoginForm()
-    username = None
-    user_password = None
+    # username = None
+    # user_password = None
     if login_form.validate_on_submit():
         username = login_form.username.data
         user_password = login_form.user_password.data
@@ -135,7 +134,9 @@ def login_google():
     except Exception as e:
         # This will now print the exact error message
         print(f"Error during login: {e}")
-        return "An error occurred. Check the server logs for details.", 500
+        flash('Sorry Failed to signup with google. Please try again')
+        return redirect(url_for('auth.login'))
+        # return "An error occurred. Check the server logs for details.", 500
 # Authorize for google
 @auth.route('/authorize/google')
 def authorize_google():
@@ -174,7 +175,7 @@ def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('NobHUB: Reset Password Request', sender=current_app.config['MAIL_USERNAME'], recipients=[user.user_email])
     msg.body = f'''To reset your password, visit the following link: {url_for('auth.reset_password', token=token, _external=True)}
-If you did not make this request simply ignore this email and no changes would be made.
+    If you did not make this request simply ignore this email and no changes would be made.
                 '''
     mail.send(msg)
 @auth.route('/reset_password', methods=['GET', 'POST'])

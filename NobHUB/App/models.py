@@ -54,7 +54,5 @@ class Messages(nob_db.Model):
     user_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)
     contact_id = nob_db.Column(nob_db.Integer, nob_db.ForeignKey('user.id'), nullable=False)
     message = nob_db.Column(nob_db.Text, nullable=False)
-    # user_message = nob_db.Column(nob_db.Text, nullable=False)
-    # contact_message = nob_db.Column(nob_db.Text, nullable=False)
     time = nob_db.Column(nob_db.DateTime, default=datetime.utcnow)
 
