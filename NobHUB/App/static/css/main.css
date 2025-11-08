@@ -394,7 +394,7 @@
   background: #f5f5f5;
 }
 .contact img{
-  max-inline-size: 15%;
+  /* max-inline-size: 15%; */
   border-radius: 50%;
   inline-size: 60px;
   block-size: 60px;
@@ -469,9 +469,11 @@
     }
 
 .right-side .chat-header img{
-  max-inline-size: 8%;
+  /* max-inline-size: 8%; */
   border-radius: 50%;
-  
+  inline-size: 60px;
+  block-size: 60px;
+  /* object-fit: cover; */
 }
 .right-side .chat-header{
   /* background-color: #fff; */
@@ -511,6 +513,7 @@
   display: flex;
   flex-direction: column;
   padding-inline: 1rem;
+  background-image: url('/App/static/images/nobhub-dollar-bg.png');
 }
 
 .chat-message {
@@ -586,12 +589,17 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  /* max-inline-size: 30%; */
+  /* inline-size: 150%; */
+  block-size: 100px;
+  border-radius: 50%;
 }
 .profile-pic img{
   display: block;
   border-radius: 50%;
-  max-inline-size: 30%;
-  inline-size: 30%;
+ inline-size: 100px;
+  /* block-size: 100px; */
+  object-fit: cover;
   
 }
 .typing-message-display{
@@ -750,7 +758,7 @@
            min-inline-size: 50%;
           }
           .right-side .chat-header img {
-              max-inline-size: 15%;
+              max-inline-size: 20%;
           }
           .margin-inline-start{
             margin-inline-start: 0.5rem;

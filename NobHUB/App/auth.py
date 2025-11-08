@@ -73,7 +73,7 @@ def signup():
                 nob_ai_exists = User.query.filter_by(username='N.O.B').first()
                 dennis_ai_exists = User.query.filter_by(username='Dennis').first()
                 if not nob_ai_exists:
-                    nob_ai = User(username='N.O.B', user_number='0000001', user_email='nob@ai.com', user_about="Hi I'm using Nobhub!", user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))
+                    nob_ai = User(username='N.O.B', user_number='0000001', user_email='nob@ai.com', user_about="Hi I'm using Nobhub!", user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'nobhublogosilverblue.png'))
                     nob_db.session.add(nob_ai)
                 if not dennis_ai_exists:
                     dennis_ai = User(username='Dennis', user_number='0000002', user_email='dennis@ai.com', user_about="Hi I'm using Nobhub!", user_password_hash='-', user_image_path=os.path.join(current_app.config['PROFILE_IMAGE_PATH'], 'defaultimg.jpg'))

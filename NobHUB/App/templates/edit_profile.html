@@ -14,7 +14,7 @@
                 <a href="/home" class=""><ion-icon name="arrow-back-outline"></ion-icon></a>
                 <div class="profile-pic">
                 <img src="{{url_for('static', filename=user.user_image_path)}}" alt="profilePic" class="profile-pic">
-
+                
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
             

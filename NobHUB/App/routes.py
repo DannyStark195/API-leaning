@@ -74,7 +74,7 @@ def home():
     if not contact_yourself_exists or not contact_nob_exists or not contact_dennis_exists:
         try:
             if not contact_yourself_exists:
-                contact_yourself= Contacts(user_id=current_user.id, contact_id=current_user.id, contact_name=current_user.username+'(Yourself)', contact_number=current_user.user_number, contact_image_path=current_user.user_image_path) #add user's self as a contact
+                contact_yourself= Contacts(user_id=current_user.id, contact_id=current_user.id, contact_name=current_user.username+' (Yourself)', contact_number=current_user.user_number, contact_image_path=current_user.user_image_path) #add user's self as a contact
                 nob_db.session.add(contact_yourself)
             if nob_ai and not contact_nob_exists:
                 contact_nob = Contacts(user_id=current_user.id, contact_id=nob_ai.id,contact_name=nob_ai.username, contact_number=nob_ai.user_number,contact_image_path=nob_ai.user_image_path)#add N.O.B as a contact
@@ -273,7 +273,9 @@ def profile():
 def edit_profile():
     edit_form = EditForm()
     user_as_contact_everywhere = Contacts.query.filter_by(contact_id= current_user.id, contact_name=current_user.username)
+    user_as_contact_yourself = Contacts.query.filter_by(user_id=current_user.id, contact_id=current_user.id).first()
     print(user_as_contact_everywhere)  
+    print(user_as_contact_yourself)
     if edit_form.validate_on_submit():
        
         edited_username = edit_form.username.data
@@ -296,15 +298,18 @@ def edit_profile():
             image_path = os.path.join(current_app.config['PROFILE_IMAGE_PATH'], imagename)
             edited_profile_pic.save(os.path.join('App/static', image_path))
             current_user.user_image_path = image_path
-        
+            user_as_contact_everywhere.update({'contact_image_path':image_path }) 
+            user_as_contact_yourself.contact_image_path = image_path
         if edited_username:
             current_user.username = edited_username
             user_as_contact_everywhere.update({'contact_name':edited_username }) 
+            user_as_contact_yourself.contact_name = edited_username
         elif edited_user_email:
             current_user.user_email = edited_user_email
         elif edited_user_number:
             current_user.user_number = edited_user_number
             user_as_contact_everywhere.update({'contact_number': edited_user_number})
+            user_as_contact_yourself.contact_number = edited_user_number
         elif edited_user_about:
             current_user.user_about = edited_user_about
             # user_as_contact_everywhere.update({'contact_number': edited_user_number})
