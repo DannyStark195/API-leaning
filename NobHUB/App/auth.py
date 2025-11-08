@@ -103,7 +103,7 @@ def login():
         user_or_email = User.query.filter(or_(User.username==username, User.user_email==username)).first()
         
         if not user_or_email:
-            flash('Username/Email does not exist!')
+            flash('Username or Email does not exist!')
             return redirect(url_for('auth.login'))
 
         if not user_or_email or not check_password_hash(user_or_email.user_password_hash, user_password):
@@ -134,7 +134,7 @@ def login_google():
     except Exception as e:
         # This will now print the exact error message
         print(f"Error during login: {e}")
-        flash('Sorry Failed to signup with google. Please try again')
+        flash('Sorry Failed to signin with google. Please try again')
         return redirect(url_for('auth.login'))
         # return "An error occurred. Check the server logs for details.", 500
 # Authorize for google

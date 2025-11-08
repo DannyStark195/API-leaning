@@ -252,6 +252,7 @@
 }
 .google-button{
   background-color: #fff;
+  cursor: pointer;
 }
 .google-icon{
   position: absolute;
